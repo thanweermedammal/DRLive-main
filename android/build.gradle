@@ -1,0 +1,43 @@
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    ext {
+        compileSdkVersion   = 30
+        targetSdkVersion    = 30
+        supportLibVersion   = "1.3.1"
+    }
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        ///newly added for jitsi
+        maven {
+            url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases"
+        }
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
