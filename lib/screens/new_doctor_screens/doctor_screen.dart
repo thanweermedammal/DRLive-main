@@ -2,11 +2,14 @@ import 'package:active_ecommerce_flutter/screens/patientScreens/ChatRoom.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:custom_horizontal_calendar/custom_horizontal_calendar.dart';
-import 'package:custom_horizontal_calendar/date_row.dart';
+// import 'package:custom_horizontal_calendar/custom_horizontal_calendar.dart';
+// import 'package:custom_horizontal_calendar/date_row.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adobe_xd/pinned.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:table_calendar/table_calendar.dart';
+
 import 'package:active_ecommerce_flutter/Message.dart';
 import 'package:active_ecommerce_flutter/models/doctor_list.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
@@ -30,14 +33,55 @@ class DoctorScreen extends StatefulWidget {
 
 class DoctorScreenState extends State<DoctorScreen> {
   Future<Doctors> futureAlbum;
+  String docId1 = '';
+  var fees1 = '';
+
   DateTime chosen = DateTime.now();
   //String selected = "Call";
   List<String> _locations = ['Call', 'Chat', 'Video']; // Option 2
   String _selectedLocation = "Call";
+  var _razorpay = Razorpay();
+  TextEditingController amountController = TextEditingController();
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    // Do something when payment succeeds
+    print('success ${response.paymentId}');
+    String date = chosen.year.toString() +
+        "-" +
+        chosen.month.toString() +
+        "-" +
+        chosen.day.toString();
+    print(date);
+    DoctorsData()
+        .takeAppoinment(docId1, user_id.$.toString(), "1", date,
+            _selectedLocation.toLowerCase(), response.paymentId)
+        .then((value) => {
+              if (value)
+                {
+                  Navigator.pop(context),
+
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //   return PaymentDetails();
+                  // }));
+                }
+            });
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+    print('Payment failed');
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet is selected
+  }
 
   @override
   void initState() {
     super.initState();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     futureAlbum = DoctorsData().fetchAlbum();
     print(widget.id);
@@ -48,26 +92,29 @@ class DoctorScreenState extends State<DoctorScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(context),
-        body: Stack(children: [
-          CustomScrollView(
-            slivers: [
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                buildMethodList(),
-              ])),
-            ],
-          ),
-          Column(
-            children: [
-              Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Stack(children: [
+            CustomScrollView(
+              slivers: [
+                SliverList(
+                    delegate: SliverChildListDelegate([
+                  buildMethodList(),
+                ])),
+              ],
+            ),
+            Column(
+              children: [
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ]));
+              ],
+            ),
+          ]),
+        ));
   }
 
   AppBar buildAppBar(BuildContext context) {
@@ -140,7 +187,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.85,
+                    // height: MediaQuery.of(context).size.height * 0.85,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20.0),
@@ -491,38 +538,52 @@ class DoctorScreenState extends State<DoctorScreen> {
                         SizedBox(
                           height: 10,
                         ),
-                        CustomHorizontalCalendar(
-                          onDateChoosen: (date) {
-                            setState(() {
-                              chosen = date;
-                            });
-                          },
-                          inintialDate: DateTime.now(),
-                          height: 60,
-                          builder: (context, i, d, width) {
-                            if (i != 2)
-                              return DateRow(
-                                d,
-                                width: width,
-                              );
-                            else
-                              return DateRow(
-                                d,
-                                background: HexColor('33BEA3'),
-                                selectedDayStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                                selectedDayOfWeekStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                                selectedMonthStyle:
-                                    TextStyle(color: Colors.white, fontSize: 0),
-                                width: width,
-                              );
-                          },
-                        ),
+                        TableCalendar(
+                            selectedDayPredicate: (day) {
+                              return isSameDay(chosen, day);
+                            },
+                            onDaySelected: (selectedDay, focusedDay) {
+                              setState(() {
+                                chosen = selectedDay;
+                                // chosen =
+                                //     focusedDay; // update `_focusedDay` here as well
+                              });
+                            },
+                            focusedDay: DateTime.now(),
+                            firstDay: DateTime.now(),
+                            lastDay: DateTime.utc(2040, 10, 18)),
+                        // CustomHorizontalCalendar(
+                        //   onDateChoosen: (date) {
+                        //     setState(() {
+                        //       chosen = date;
+                        //     });
+                        //   },
+                        //   inintialDate: DateTime.now(),
+                        //   height: 60,
+                        //   builder: (context, i, d, width) {
+                        //     if (i != 2)
+                        //       return DateRow(
+                        //         d,
+                        //         width: width,
+                        //       );
+                        //     else
+                        //       return DateRow(
+                        //         d,
+                        //         background: HexColor('33BEA3'),
+                        //         selectedDayStyle: TextStyle(
+                        //             color: Colors.white,
+                        //             fontSize: 16,
+                        //             fontWeight: FontWeight.bold),
+                        //         selectedDayOfWeekStyle: TextStyle(
+                        //             color: Colors.white,
+                        //             fontSize: 18,
+                        //             fontWeight: FontWeight.bold),
+                        //         selectedMonthStyle:
+                        //             TextStyle(color: Colors.white, fontSize: 0),
+                        //         width: width,
+                        //       );
+                        //   },
+                        // ),
                         SizedBox(
                           height: 30,
                         ),
@@ -588,6 +649,8 @@ class DoctorScreenState extends State<DoctorScreen> {
   }
 
   void showBookingDialog(String fees, String docName, String docId) {
+    docId1 = docId;
+    fees1 = fees;
     showGeneralDialog(
       barrierLabel: "Barrier",
       barrierDismissible: true,
@@ -1162,25 +1225,21 @@ class DoctorScreenState extends State<DoctorScreen> {
           ),
           GestureDetector(
             onTap: () {
-              String date = chosen.year.toString() +
-                  "-" +
-                  chosen.month.toString() +
-                  "-" +
-                  chosen.day.toString();
-              print(date);
-              DoctorsData()
-                  .takeAppoinment(docId, user_id.$.toString(), "1", date,
-                      _selectedLocation.toLowerCase())
-                  .then((value) => {
-                        if (value)
-                          {
-                            Navigator.pop(context),
-
-                            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            //   return PaymentDetails();
-                            // }));
-                          }
-                      });
+              var options = {
+                'key': 'rzp_test_xlulO3L7kqjqUy',
+                'amount':
+                    int.parse(fees1) * 100, //in the smallest currency sub-unit.
+                'name': 'Acme Corp.',
+                // 'order_id':
+                //     'order_EMBFqjDHEEn80l', // Generate order_id using Orders API
+                'description': 'Consultation fee',
+                'timeout': 300, // in seconds
+                'prefill': {
+                  'contact': user_phone.$.toString(),
+                  'email': 'gaurav.kumar@example.com'
+                }
+              };
+              _razorpay.open(options);
             },
             child: Center(
               child: Container(

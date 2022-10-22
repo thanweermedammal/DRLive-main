@@ -204,7 +204,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
-      toolbarHeight: 90,
+      toolbarHeight: 100,
       // backgroundColor:  Color(0xff6b0772),
       flexibleSpace: Container(
         // height: 10,
@@ -226,97 +226,104 @@ class _ProfileEditState extends State<ProfileEdit> {
         child: Column(
           children: [
             SizedBox(
-              height: 35,
+              height: 60,
             ),
             Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    _scaffoldKey.currentState.openDrawer();
-                  },
-                  child: widget.is_base_category
-                      ? Builder(
-                          builder: (context) => Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 10.0),
-                            child: Container(
-                                height: 30,
-                                width: 30,
-                                //color: Colors.white,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, start: 0.0),
-                                      Pin(size: 12.0, start: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(2.0),
-                                            topRight: Radius.circular(2.0),
-                                            bottomLeft: Radius.circular(2.0),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, end: 0.0),
-                                      Pin(size: 12.0, start: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(2.0),
-                                            topRight: Radius.circular(2.0),
-                                            bottomRight: Radius.circular(2.0),
-                                          ),
-                                          border: Border.all(
-                                            width: 1.0,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, start: 0.0),
-                                      Pin(size: 12.0, end: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(2.0),
-                                            bottomRight: Radius.circular(2.0),
-                                            bottomLeft: Radius.circular(2.0),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, end: 0.0),
-                                      Pin(size: 12.0, end: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(2.0),
-                                            bottomRight: Radius.circular(2.0),
-                                            bottomLeft: Radius.circular(2.0),
-                                          ),
-                                          border: Border.all(
-                                            width: 1.0,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        )
-                      : Builder(
-                          builder: (context) => IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.white),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: GestureDetector(
+                      onTap: () {
+                        _scaffoldKey.currentState.openDrawer();
+                      },
+                      child: Icon(
+                        Icons.menu,
+                        color: Colors.black,
+                      )
+                      // widget.is_base_category
+                      //     ? Builder(
+                      //         builder: (context) => Padding(
+                      //           padding: EdgeInsets.symmetric(
+                      //               vertical: 10.0, horizontal: 10.0),
+                      //           child: Container(
+                      //               height: 30,
+                      //               width: 30,
+                      //               //color: Colors.white,
+                      //               child: Stack(
+                      //                 children: <Widget>[
+                      //                   Pinned.fromPins(
+                      //                     Pin(size: 12.0, start: 0.0),
+                      //                     Pin(size: 12.0, start: 0.0),
+                      //                     child: Container(
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius: BorderRadius.only(
+                      //                           topLeft: Radius.circular(2.0),
+                      //                           topRight: Radius.circular(2.0),
+                      //                           bottomLeft: Radius.circular(2.0),
+                      //                         ),
+                      //                         color: Colors.white,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                   Pinned.fromPins(
+                      //                     Pin(size: 12.0, end: 0.0),
+                      //                     Pin(size: 12.0, start: 0.0),
+                      //                     child: Container(
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius: BorderRadius.only(
+                      //                           topLeft: Radius.circular(2.0),
+                      //                           topRight: Radius.circular(2.0),
+                      //                           bottomRight: Radius.circular(2.0),
+                      //                         ),
+                      //                         border: Border.all(
+                      //                           width: 1.0,
+                      //                           color: Colors.white,
+                      //                         ),
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                   Pinned.fromPins(
+                      //                     Pin(size: 12.0, start: 0.0),
+                      //                     Pin(size: 12.0, end: 0.0),
+                      //                     child: Container(
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius: BorderRadius.only(
+                      //                           topLeft: Radius.circular(2.0),
+                      //                           bottomRight: Radius.circular(2.0),
+                      //                           bottomLeft: Radius.circular(2.0),
+                      //                         ),
+                      //                         color: Colors.white,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                   Pinned.fromPins(
+                      //                     Pin(size: 12.0, end: 0.0),
+                      //                     Pin(size: 12.0, end: 0.0),
+                      //                     child: Container(
+                      //                       decoration: BoxDecoration(
+                      //                         borderRadius: BorderRadius.only(
+                      //                           topRight: Radius.circular(2.0),
+                      //                           bottomRight: Radius.circular(2.0),
+                      //                           bottomLeft: Radius.circular(2.0),
+                      //                         ),
+                      //                         border: Border.all(
+                      //                           width: 1.0,
+                      //                           color: Colors.white,
+                      //                         ),
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               )),
+                      //         ),
+                      //       )
+                      //     : Builder(
+                      //         builder: (context) => IconButton(
+                      //           icon: Icon(Icons.arrow_back, color: Colors.white),
+                      //           onPressed: () => Navigator.of(context).pop(),
+                      //         ),
+                      //       ),
+                      ),
                 ),
                 Text(
                   'Profile',

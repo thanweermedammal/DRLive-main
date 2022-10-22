@@ -47,7 +47,11 @@ final SharedValue<String> user_name = SharedValue(
   key: "user_name", // disk storage key for shared_preferences
   autosave: true, // autosave to shared prefs when value changes
 );
-
+final SharedValue<String> choose = SharedValue(
+  value: "", // initial value
+  key: "choose", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
 final SharedValue<String> user_email = SharedValue(
   value: "", // initial value
   key: "user_email", // disk storage key for shared_preferences

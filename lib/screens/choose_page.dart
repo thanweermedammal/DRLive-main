@@ -1,7 +1,9 @@
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/screens/login_page.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'doctorScreens/doctorlogin_screen.dart';
 
@@ -24,7 +26,10 @@ class ChoosePage extends StatelessWidget {
                 // width: 200,
               ),
               InkWell(
-                onTap: () {
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setString('choose', 'doctor');
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => DocLoginpage()));
                 },
@@ -46,9 +51,13 @@ class ChoosePage extends StatelessWidget {
                 height: 20,
               ),
               InkWell(
-                onTap: () {
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setString('choose', 'patient');
+
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Loginpage()));
+                      MaterialPageRoute(builder: (context) => Login()));
                 },
                 child: Container(
                     width: 200,

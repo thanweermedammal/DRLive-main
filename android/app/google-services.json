@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:482316725346:android:14c049945712702b5ef53b",
+        "mobilesdk_app_id": "1:482316725346:android:186b58c729ff4caa5ef53b",
         "android_client_info": {
-          "package_name": "com.new.doctorsApp"
+          "package_name": "com.example.active_ecommerce_flutter"
         }
       },
       "oauth_client": [

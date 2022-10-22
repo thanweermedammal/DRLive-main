@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:active_ecommerce_flutter/screens/choose_page.dart';
+import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation_doctor.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -20,8 +21,24 @@ class _SplashState extends State<Splash> {
       UserData().authenticateUser(user_phone.$, pass.$).then((value) => {
             if (value)
               {
+                print(user_phone.$),
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (BuildContext context) => BottomBar())),
+              }
+            else
+              {
+                print("No user"),
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (BuildContext context) => ChoosePage())),
+              }
+          });
+    } else if (user_email.$ != null && pass.$ != null) {
+      UserData().authenticateDoc(user_email.$, pass.$).then((value) => {
+            if (value)
+              {
+                print(user_email.$),
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (BuildContext context) => BottomBar2())),
               }
             else
               {
@@ -36,7 +53,7 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    fetchUser();
+    // fetchUser();
     super.initState();
   }
 

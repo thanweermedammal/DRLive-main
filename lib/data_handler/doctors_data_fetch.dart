@@ -61,7 +61,7 @@ class DoctorsData {
   }
 
   Future<bool> takeAppoinment(String d_id, String p_id, String category,
-      String date, String method) async {
+      String date, String method, String payment_id) async {
     String token = access_token.$;
 
     Map data = {
@@ -69,7 +69,8 @@ class DoctorsData {
       'patient_id': p_id,
       'category_id': category,
       'date': date,
-      'method': method
+      'method': method,
+      'payment_id': payment_id
     };
     //encode Map to JSON
     var body = json.encode(data);

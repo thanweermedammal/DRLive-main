@@ -10,6 +10,7 @@ import 'package:active_ecommerce_flutter/ConsultationHistory.dart';
 import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/AppointmentHistory1.dart';
 import 'package:active_ecommerce_flutter/screens/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainDrawer extends StatefulWidget {
   const MainDrawer({
@@ -22,7 +23,10 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   onTapLogout(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     user_id.$ = null;
+    prefs.setString('number', '');
     AuthHelper().clearUserData();
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return ChoosePage();

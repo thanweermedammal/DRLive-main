@@ -9,6 +9,7 @@ import 'package:active_ecommerce_flutter/screens/signuppage.dart';
 import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter_flexible_toast/flutter_flexible_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DocLoginpage extends StatefulWidget {
   @override
@@ -19,7 +20,9 @@ class DocLoginpageState extends State<DocLoginpage> {
   var passw = TextEditingController();
   var phone = TextEditingController();
 
-  login() {
+  login() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     UserData().authenticateDoc(phone.text, passw.text).then((value) => {
           if (value)
             {
@@ -34,6 +37,8 @@ class DocLoginpageState extends State<DocLoginpage> {
                   textColor: Colors.white,
                   backgroundColor: HexColor('33BEA3'),
                   timeInSeconds: 3),
+              prefs.setString('email', phone.text),
+              prefs.setString('pass', passw.text),
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => BottomBar2())),
             }
@@ -190,7 +195,7 @@ class DocLoginpageState extends State<DocLoginpage> {
                             obscureText: false,
                             controller: phone,
                             decoration: InputDecoration(
-                              hintText: 'Phone Number',
+                              hintText: 'Email',
                               hintStyle: TextStyle(
                                 fontFamily: 'Arial',
                                 fontSize: 15,

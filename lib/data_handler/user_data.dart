@@ -13,12 +13,9 @@ import 'dart:convert';
 class UserData {
   Future<bool> authenticateUser(String number, String password) async {
     try {
-      final response =
-          await http.post(Uri.parse('${AppConfig.BASE_URL}login'), body: {
-        'type': "mobile",
-        'password': password,
-        'email_or_phone': number,
-      });
+      final response = await http.post(
+          Uri.parse('${AppConfig.BASE_URL}mobile/login'),
+          body: {'mobile': number});
       switch (response.statusCode) {
         case 200:
           final values = json.decode(response.body);

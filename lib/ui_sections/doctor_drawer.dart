@@ -13,6 +13,7 @@ import 'package:active_ecommerce_flutter/screens/patientScreens/AppointmentHisto
 import 'package:active_ecommerce_flutter/screens/login_page.dart';
 import 'package:active_ecommerce_flutter/screens/new_doctor_screens/Leave.dart';
 import 'package:active_ecommerce_flutter/screens/new_doctor_screens/wallet.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorDrawer extends StatefulWidget {
   const DoctorDrawer({
@@ -25,7 +26,12 @@ class DoctorDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<DoctorDrawer> {
   onTapLogout(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     user_id.$ = null;
+    prefs.setString('email', '');
+    prefs.setString('pass', '');
+
     AuthHelper().clearUserData();
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return ChoosePage();

@@ -1,12 +1,15 @@
+import 'package:active_ecommerce_flutter/screens/splash1_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:shared_value/shared_value.dart';
 import 'package:active_ecommerce_flutter/screens/splash.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -44,7 +47,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       //home: OnboardingScreen(),
-      home: Splash(),
+      home: Splash1Screen(),
     );
   }
 }
