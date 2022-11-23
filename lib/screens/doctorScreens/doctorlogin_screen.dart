@@ -11,6 +11,8 @@ import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter_flexible_toast/flutter_flexible_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 class DocLoginpage extends StatefulWidget {
   @override
   DocLoginpageState createState() => DocLoginpageState();
@@ -19,6 +21,122 @@ class DocLoginpage extends StatefulWidget {
 class DocLoginpageState extends State<DocLoginpage> {
   var passw = TextEditingController();
   var phone = TextEditingController();
+  bool _passwordVisible = false;
+
+  // late CustomTheme customTheme;
+  // late ThemeData theme;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     // customTheme = AppTheme.customTheme;
+//     // theme = AppTheme.theme;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         body: ListView(
+//       padding: EdgeInsets.all(0),
+//       children: <Widget>[
+//         Container(
+//           height: MediaQuery.of(context).size.height * 3 / 10,
+//           child: Stack(
+//             children: <Widget>[
+//               Container(
+//                 decoration: BoxDecoration(
+//                     color: Colors.grey,
+//                     borderRadius:
+//                         BorderRadius.only(bottomLeft: Radius.circular(96))),
+//               ),
+//               Positioned(
+//                 top: 30,
+//                 left: 10,
+//                 child: BackButton(
+//                   color: Colors.grey,
+//                   onPressed: () => Navigator.of(context).pop(),
+//                 ),
+//               ),
+//               Positioned(
+//                 bottom: 20,
+//                 right: 40,
+//                 child: Text("LOGIN",style: TextStyle(fontWeight: FontWeight.w600), ),
+//               )
+//             ],
+//           ),
+//         ),
+//         Container(
+//           margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+//           child: Container(
+//             padding: EdgeInsets.only(top: 12, left: 20, right: 20, bottom: 12),
+//             child: Column(
+//               children: <Widget>[
+//                 TextFormField(
+//                   style: TextStyle(
+//                       letterSpacing: 0.1,
+//                       color: Colors.grey,
+//                       fontWeight: FontWeight.w500),
+//                   decoration: InputDecoration(
+//                     hintText: "Email",
+//                     hintStyle: TextStyle(
+//                         letterSpacing: 0.1,
+//                         color: Colors.grey,
+//                         fontWeight: FontWeight.w500),
+//                     prefixIcon: Icon(Icons.email_outlined),
+//                   ),
+//                 ),
+//                 Container(
+//                   margin: EdgeInsets.only(top: 20),
+//                   child: TextFormField(
+//                     style: TextStyle(
+//                         letterSpacing: 0.1,
+//                         color: Colors.grey,
+//                         fontWeight: FontWeight.w500),
+//                     decoration: InputDecoration(
+//                       hintText: "Password",
+//                       hintStyle: TextStyle(
+//                           letterSpacing: 0.1,
+//                           color: Colors.grey,
+//                           fontWeight: FontWeight.w500),
+//                       prefixIcon: Icon(Icons.lock_outline),
+//                       suffixIcon: IconButton(
+//                         icon: Icon(_passwordVisible
+//                             ? Icons.remove_red_eye_outlined
+//                             : Icons.remove_red_eye_sharp),
+//                         onPressed: () {
+//                           setState(() {
+//                             _passwordVisible = _passwordVisible;
+//                           });
+//                         },
+//                       ),
+//                     ),
+//                     obscureText: _passwordVisible,
+//                   ),
+//                 ),
+//                 Container(
+//                   margin: EdgeInsets.only(top: 20),
+//                   alignment: Alignment.centerRight,
+//                   child: FxText.caption("Forgot Password ?", fontWeight: 500),
+//                 ),
+//                 Container(
+//                   margin: EdgeInsets.only(top: 20),
+//                   child: Button(
+//                       elevation: 0,
+//                       borderRadiusAll: 4,
+//                       onPressed: () {},
+//                       child: FxText.button("LOGIN",
+//                           fontWeight: 600,
+//                           color: theme.colorScheme.onPrimary,
+//                           letterSpacing: 0.5)),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ],
+//     ));
+//   }
+// }
 
   login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -95,14 +213,26 @@ class DocLoginpageState extends State<DocLoginpage> {
                         ),
                       ],
                     ),
-                    Pinned.fromPins(Pin(size: 200.0, middle: 0.4996),
-                        Pin(size: 400.0, middle: 0),
+                    Pinned.fromPins(Pin(size: 400.0, middle: 0.4996),
+                        Pin(size: 390.0, middle: 0),
                         child: Image.asset(
                           'assets/images/Rectangle 1.png',
                         )),
                     Pinned.fromPins(
-                      Pin(size: 125.0, middle: 0.4213),
-                      Pin(size: 37.0, middle: 0.4989),
+                      Pin(size: 139.0, middle: 0.5),
+                      Pin(size: 30.0, middle: 0.374),
+                      child: Text(
+                        'Doctor Login',
+                        style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Pinned.fromPins(
+                      Pin(size: 157.0, middle: 0.5),
+                      Pin(size: 43.0, middle: 0.6489),
                       child: PageLink(
                         links: [
                           // PageLinkInfo(
@@ -160,36 +290,22 @@ class DocLoginpageState extends State<DocLoginpage> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(10.0),
                               color: HexColor('33BEA3'),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0x29000000),
-                                  offset: Offset(6, 3),
-                                  blurRadius: 6,
-                                ),
-                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
                     Pinned.fromPins(
-                      Pin(size: 268.0, start: 60.0),
-                      Pin(size: 37.0, middle: 0.3200),
+                      Pin(size: 268.0, start: 63.0),
+                      Pin(size: 43.0, middle: 0.4600),
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(10.0),
                           color: const Color(0xffffffff),
                           border: Border.all(
                               width: 1.0, color: const Color(0x29000000)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0x29000000),
-                              offset: Offset(6, 3),
-                              blurRadius: 6,
-                            ),
-                          ],
                         ),
                         child: TextFormField(
                             obscureText: false,
@@ -210,21 +326,14 @@ class DocLoginpageState extends State<DocLoginpage> {
                       ),
                     ),
                     Pinned.fromPins(
-                      Pin(size: 268.0, start: 60.0),
-                      Pin(size: 37.0, middle: 0.39),
+                      Pin(size: 268.0, start: 63.0),
+                      Pin(size: 43.0, middle: 0.53),
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(10.0),
                           color: Colors.white,
                           border: Border.all(
                               width: 1.0, color: const Color(0x29000000)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0x29000000),
-                              offset: Offset(6, 3),
-                              blurRadius: 6,
-                            ),
-                          ],
                         ),
                         child: TextFormField(
                             obscureText: true,
@@ -245,8 +354,8 @@ class DocLoginpageState extends State<DocLoginpage> {
                       ),
                     ),
                     Pinned.fromPins(
-                      Pin(size: 39.0, middle: 0.4444),
-                      Pin(size: 17.0, middle: 0.4997),
+                      Pin(size: 50.0, middle: 0.4944),
+                      Pin(size: 17.0, middle: 0.644),
                       child: Text(
                         'Login',
                         style: TextStyle(

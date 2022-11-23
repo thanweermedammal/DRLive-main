@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 import 'package:active_ecommerce_flutter/screens/choose_page.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/login.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation_doctor.dart';
+import 'package:active_ecommerce_flutter/ui_sections/secondscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,7 +59,7 @@ class _Splash1ScreenState extends State<Splash1Screen> {
     } else {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => ChoosePage()),
+          MaterialPageRoute(builder: (context) => SecondScreen()),
           (route) => false);
     }
   }

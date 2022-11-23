@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:active_ecommerce_flutter/screens/patientScreens/ChatRoom.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/chat_page.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:file_picker/file_picker.dart';
 
 import 'package:active_ecommerce_flutter/Message.dart';
 import 'package:active_ecommerce_flutter/models/doctor_list.dart';
@@ -19,6 +23,9 @@ import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DoctorScreen extends StatefulWidget {
   DoctorScreen({Key key, this.is_base_category = false, this.id})
@@ -35,36 +42,89 @@ class DoctorScreenState extends State<DoctorScreen> {
   Future<Doctors> futureAlbum;
   String docId1 = '';
   var fees1 = '';
-
+  String document;
+  List files = [];
+  List names = [];
   DateTime chosen = DateTime.now();
   //String selected = "Call";
-  List<String> _locations = ['Call', 'Chat', 'Video']; // Option 2
+  List<String> _locations = ['Call', 'Video']; // Option 2
   String _selectedLocation = "Call";
+  static String getRandString(int len) {
+    var r = Random();
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
+  }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  void _pickFiles() async {
+    _resetState();
+    try {
+      _directoryPath = null;
+      _paths = (await FilePicker.platform.pickFiles(
+        type: _pickingType,
+        allowMultiple: _multiPick,
+        onFileLoading: (FilePickerStatus status) => print(status),
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension?.replaceAll(' ', '').split(',')
+            : null,
+      ))
+          ?.files;
+    } on PlatformException catch (e) {
+      _logException('Unsupported operation' + e.toString());
+    } catch (e) {
+      _logException(e.toString());
+    }
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+      _fileName = _paths != null ? _paths.map((e) => e.name).toString() : '...';
+      _userAborted = _paths == null;
+    });
+    print("name ---${_fileName}");
+    print("path   --${_paths.first.path}");
+    print("use   --${_userAborted}");
+  }
+
+  void _logException(String message) {
+    print(message);
+    _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+    _scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  void _resetState() {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _directoryPath = null;
+      _fileName = null;
+      _paths = null;
+      _saveAsFileName = null;
+      _userAborted = false;
+    });
+  }
+
   var _razorpay = Razorpay();
   TextEditingController amountController = TextEditingController();
-
+  TextEditingController nameController = TextEditingController();
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     // Do something when payment succeeds
     print('success ${response.paymentId}');
-    String date = chosen.year.toString() +
-        "-" +
-        chosen.month.toString() +
-        "-" +
-        chosen.day.toString();
-    print(date);
-    DoctorsData()
-        .takeAppoinment(docId1, user_id.$.toString(), "1", date,
-            _selectedLocation.toLowerCase(), response.paymentId)
-        .then((value) => {
-              if (value)
-                {
-                  Navigator.pop(context),
-
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  //   return PaymentDetails();
-                  // }));
-                }
-            });
+    DoctorsData().payment(response.paymentId);
+    setState(() {
+      files = [];
+      names = [];
+      _paths = null;
+    });
+    Navigator.pop(context);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -75,7 +135,16 @@ class DoctorScreenState extends State<DoctorScreen> {
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
   }
-
+  String _fileName;
+  String _saveAsFileName;
+  List<PlatformFile> _paths;
+  String _directoryPath;
+  String _extension;
+  bool _isLoading = false;
+  bool _userAborted = false;
+  bool _multiPick = false;
+  FileType _pickingType = FileType.any;
+  TextEditingController _controller = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -84,6 +153,7 @@ class DoctorScreenState extends State<DoctorScreen> {
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     futureAlbum = DoctorsData().fetchAlbum();
+    _controller.addListener(() => _extension = _controller.text);
     print(widget.id);
   }
 
@@ -389,7 +459,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                           ],
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 30,
                         ),
                         Column(
                           children: [
@@ -539,6 +609,10 @@ class DoctorScreenState extends State<DoctorScreen> {
                           height: 10,
                         ),
                         TableCalendar(
+
+                            // customGridViewPhysics: NeverScrollableScrollPhysics(),
+
+                            rowHeight: 30,
                             selectedDayPredicate: (day) {
                               return isSameDay(chosen, day);
                             },
@@ -617,6 +691,171 @@ class DoctorScreenState extends State<DoctorScreen> {
                                   textAlign: TextAlign.left,
                                 ),
                               )),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            child: Column(
+                              children: [
+                                InkWell(
+                                    onTap: () async {
+                                      _pickFiles();
+
+                                      // FilePickerResult result =
+                                      //     await FilePicker.platform.pickFiles();
+
+                                      // if (result != null) {
+                                      //   File file =
+                                      //       File(result.files.single.path);
+                                      //   print(file);
+                                      //   File filePick =
+                                      //       new File(file.toString());
+                                      //
+                                      //   setState(() {
+                                      //     document = file.toString();
+                                      //     print(document);
+                                      //   });
+                                      // } else {
+                                      //   // User canceled the picker
+                                      // }
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(_paths == null
+                                                  ? "upload document"
+                                                  : _paths.first.name
+                                                      .toString()),
+                                            ),
+                                            Icon(
+                                              Icons.file_copy_rounded,
+                                              color: Colors.grey,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 40,
+                                  child: TextFormField(
+                                    // validator: phoneValidator,
+                                    keyboardType: TextInputType.text,
+                                    cursorColor: Colors.green,
+                                    controller: nameController,
+                                    onChanged: (text) {
+                                      // mobileNumber = value;
+                                    },
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      contentPadding: EdgeInsets.all(10),
+                                      focusColor: Colors.greenAccent,
+                                      // labelStyle: ktext14,
+                                      labelText: "Remarks",
+                                      // suffixIcon: Icon(Icons.unfold_more),
+                                      labelStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                        color: Colors.grey,
+                                      )),
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                        color: Colors.grey,
+                                      )),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          files.add(_paths.first.path);
+                                          names.add(nameController.text);
+                                          document = null;
+                                        });
+                                        nameController.clear();
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: HexColor('33BEA3')),
+                                        child: Center(
+                                          child: Text(
+                                            'Add',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                //height: 1.6,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                files = [];
+                                names = [];
+                              });
+                            },
+                            child: Icon(Icons.delete)),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: 130,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey)),
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: files.length,
+                                itemBuilder: (context, index) => Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.picture_as_pdf_outlined,
+                                          color: Colors.red,
+                                          size: 90,
+                                        ),
+                                        Text(names[index]),
+                                      ],
+                                    ))),
+                          ),
                         ),
                         SizedBox(
                           height: 50,
@@ -775,7 +1014,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              ":",
+                                              "    :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -850,7 +1089,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              "   :",
+                                              "    :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -903,7 +1142,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              "Consultation Method   :",
+                                              "Consultation Method :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -955,15 +1194,15 @@ class DoctorScreenState extends State<DoctorScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Spacer(),
+                                    // Spacer(),
                                     Center(
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            EdgeInsets.fromLTRB(50, 0, 0, 0),
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              " Appoinment Date               :",
+                                              " Appoinment Date        :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -981,7 +1220,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                                     Center(
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            EdgeInsets.fromLTRB(10, 0, 0, 0),
                                         child: Center(
                                           child: Container(
                                             child: Text(
@@ -1017,11 +1256,11 @@ class DoctorScreenState extends State<DoctorScreen> {
                                     Center(
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            EdgeInsets.fromLTRB(20, 0, 0, 0),
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              " Patient Name              :",
+                                              "Patient Name                :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -1070,11 +1309,11 @@ class DoctorScreenState extends State<DoctorScreen> {
                                     Center(
                                       child: Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            EdgeInsets.fromLTRB(10, 0, 0, 0),
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              "Phone Number                  :",
+                                              "Phone Number             :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -1127,7 +1366,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                                         child: Center(
                                           child: Container(
                                             child: Text(
-                                              "Consultation Fee              :",
+                                              "Consultation Fee          :",
                                               textAlign: TextAlign.left,
                                               // overflow: TextOverflow.ellipsis,
                                               // maxLines: 1,
@@ -1224,7 +1463,7 @@ class DoctorScreenState extends State<DoctorScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               var options = {
                 'key': 'rzp_test_xlulO3L7kqjqUy',
                 'amount':
@@ -1236,10 +1475,32 @@ class DoctorScreenState extends State<DoctorScreen> {
                 'timeout': 300, // in seconds
                 'prefill': {
                   'contact': user_phone.$.toString(),
-                  'email': 'gaurav.kumar@example.com'
+                  'email': user_email.$
                 }
               };
-              _razorpay.open(options);
+              String date = chosen.year.toString() +
+                  "-" +
+                  chosen.month.toString() +
+                  "-" +
+                  chosen.day.toString();
+              print(date);
+              DoctorsData()
+                  .takeAppoinment(docId1, user_id.$.toString(), "1", date,
+                      _selectedLocation.toLowerCase())
+                  .then((value) => {
+                        if (value)
+                          {
+                            print(value),
+                            DoctorsData().addDocument2(names, files, context),
+                            // print(appointmentid.$),
+                            _razorpay.open(options),
+                            // Navigator.pop(context),
+
+                            // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            //   return PaymentDetails();
+                            // }));
+                          }
+                      });
             },
             child: Center(
               child: Container(

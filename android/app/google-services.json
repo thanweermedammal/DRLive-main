@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "482316725346",
-    "project_id": "drlive-3cb74",
-    "storage_bucket": "drlive-3cb74.appspot.com"
+    "project_number": "163440700016",
+    "project_id": "vydhya-8c7d4",
+    "storage_bucket": "vydhya-8c7d4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:482316725346:android:186b58c729ff4caa5ef53b",
+        "mobilesdk_app_id": "1:163440700016:android:57a9d1fe0e56183457e2b5",
         "android_client_info": {
-          "package_name": "com.example.active_ecommerce_flutter"
+          "package_name": "com.vydhya.active_ecommerce_flutter"
         }
       },
       "oauth_client": [
         {
-          "client_id": "482316725346-fqieqd7td7ld2k0nagqlf8dc2iohrek1.apps.googleusercontent.com",
+          "client_id": "163440700016-tnm09q9f2c8f529hmd03em16ul60l068.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBRrUikzCmOsZIpajm-hPqvnqbPCv5rwso"
+          "current_key": "AIzaSyBVuR1QD9Fi_3_rLOJhK75G64rIkEcKrGs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "482316725346-fqieqd7td7ld2k0nagqlf8dc2iohrek1.apps.googleusercontent.com",
+              "client_id": "163440700016-tnm09q9f2c8f529hmd03em16ul60l068.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

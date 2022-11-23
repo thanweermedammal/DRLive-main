@@ -1,5 +1,7 @@
 import 'package:active_ecommerce_flutter/models/active_patient_history.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
+import 'package:active_ecommerce_flutter/screens/new_doctor_screens/patientdocs.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/model/doctorwallet.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:active_ecommerce_flutter/models/active_doctor_history.dart';
@@ -29,6 +31,33 @@ class History {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       return activeDoctorHistoryFromJson(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  Future<Docwallet> doctorWalletApi(String doctor_id) async {
+    String token = access_token.$;
+    Map data = {
+      'doctor_id': doctor_id,
+    };
+    //encode Map to JSON
+    var body = json.encode(data);
+    final response = await http.post(
+        Uri.parse('${AppConfig.BASE_URL}doctor/wallet'),
+        body: body,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return docwalletFromJson(response.body);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -119,6 +148,33 @@ class History {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       return pastPatientHistoryFromJson(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  Future<PatientDocuments> patientDocument(String appointment_id) async {
+    String token = access_token.$;
+    Map data = {
+      'appointment_id': appointment_id,
+    };
+    //encode Map to JSON
+    var body = json.encode(data);
+    final response = await http.post(
+        Uri.parse('${AppConfig.BASE_URL}documents/view'),
+        body: body,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return patientDocumentsFromJson(response.body);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

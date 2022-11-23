@@ -1,4 +1,10 @@
+import 'package:active_ecommerce_flutter/data_handler/fetch_history.dart';
+import 'package:active_ecommerce_flutter/data_handler/notification_handler.dart';
+import 'package:active_ecommerce_flutter/models/active_doctor_history.dart';
+import 'package:active_ecommerce_flutter/models/stories.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
+import 'package:active_ecommerce_flutter/screens/new_doctor_screens/adddoctorstory.dart';
+import 'package:active_ecommerce_flutter/screens/new_doctor_screens/appointmentview.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/meeting1_scree.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/storypage.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/doctors_list.dart';
@@ -37,13 +43,17 @@ class _HomeState extends State<Home1> {
   Future<Doctors> futureAlbum;
   Future<Banners> fetchBanner;
   Future<Appointments> fetchAppointment;
+  Future<ActiveDoctorHistory> fetchAppointments;
+  Future<Stories> allStory;
 
   @override
   void initState() {
     super.initState();
+    fetchAppointments = History().activeDoctorData("1");
     futureAlbum = DoctorsData().fetchAlbum();
     fetchBanner = BannerData().fetchBanners();
     fetchAppointment = AppointmentData().fetchAppointments("1");
+    allStory = NotificationHandler().allStories();
   }
 
   @override
@@ -74,10 +84,216 @@ class _HomeState extends State<Home1> {
                       8.0,
                       0.0,
                     ),
-                    child: buildHomeMedicineRow(context),
+                    child: buildHomeStoryRow(context),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 10,
+                  )
+                ]),
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      16.0,
+                      0.0,
+                      16.0,
+                      0.0,
+                    ),
+                    child: SizedBox(
+                      height: 200,
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0x29000000),
+                                      offset: Offset(6, 3),
+                                      blurRadius: 12,
+                                    ),
+                                  ],
+                                  color: Colors.white),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Today's Appointments",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20.0, vertical: 10),
+                                        child: FutureBuilder(
+                                          future: fetchAppointment,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Text(
+                                                snapshot
+                                                    .data.appointments.length
+                                                    .toString(),
+                                                style: TextStyle(fontSize: 24),
+                                              );
+                                            } else {
+                                              return Text(
+                                                '0',
+                                                style: TextStyle(fontSize: 24),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          )),
+                          Expanded(
+                              child: SizedBox(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0x29000000),
+                                              offset: Offset(6, 3),
+                                              blurRadius: 12,
+                                            ),
+                                          ],
+                                          color: Colors.white),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Text(
+                                              "Total Appointments",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: FutureBuilder(
+                                                  future: fetchAppointments,
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.hasData) {
+                                                      return Text(
+                                                        snapshot.data
+                                                            .appointments.length
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 24),
+                                                      );
+                                                    } else {
+                                                      return Text(
+                                                        '0',
+                                                        style: TextStyle(
+                                                            fontSize: 24),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0x29000000),
+                                              offset: Offset(6, 3),
+                                              blurRadius: 12,
+                                            ),
+                                          ],
+                                          color: Colors.white),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0, right: 8),
+                                            child: Text(
+                                              "Today's Date",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ))
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
                   )
                 ]),
               ),
@@ -153,14 +369,29 @@ class _HomeState extends State<Home1> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              'Todays Appointments',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 22,
-                                color: const Color(0xff000000),
-                              ),
-                              textAlign: TextAlign.left,
+                            Column(
+                              // mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Today\'s',
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 22,
+                                    color: Colors.grey,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Text(
+                                  'Appointment',
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 22,
+                                    color: const Color(0xff000000),
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
                             ),
                             Spacer(),
                             GestureDetector(
@@ -197,116 +428,116 @@ class _HomeState extends State<Home1> {
                   ),
                 ]),
               ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      16.0,
-                      16.0,
-                      8.0,
-                      0.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Experience Us',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 22,
-                                color: const Color(0xff000000),
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ]),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Container(
-                      height: 160,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Center(
-                        child: Container(
-                          height: 150,
-                          // width: 300,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: const Color(0xff6b0772),
-                            borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0x29000000),
-                                offset: Offset(6, 3),
-                                blurRadius: 16,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.all(15.0),
-                                      child: Text(
-                                        'Doctors who care',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 20,
-                                          color: Color(0xffffffff),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      )),
-                                  Padding(
-                                      padding: EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'Our doctors listen to you\npatiently and only prescribe \nwhat\'s necessary.',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 16,
-                                          color: Color(0xffffffff),
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      )),
-                                ],
-                              ),
-                              Container(
-                                width: 100,
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      right: 10,
-                                      bottom: 5,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(0.0),
-                                        child: Image.asset(
-                                          "assets/images/welcome.png",
-                                          height: 130,
-                                          width: 80,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
+              // SliverList(
+              //   delegate: SliverChildListDelegate([
+              //     Padding(
+              //       padding: const EdgeInsets.fromLTRB(
+              //         16.0,
+              //         16.0,
+              //         8.0,
+              //         0.0,
+              //       ),
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Row(
+              //             children: [
+              //               Text(
+              //                 'Experience Us',
+              //                 style: TextStyle(
+              //                   fontFamily: 'Arial',
+              //                   fontSize: 22,
+              //                   color: const Color(0xff000000),
+              //                 ),
+              //                 textAlign: TextAlign.left,
+              //               ),
+              //             ],
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ]),
+              // ),
+              // SliverList(
+              //   delegate: SliverChildListDelegate([
+              //     Padding(
+              //       padding: EdgeInsets.all(15.0),
+              //       child: Container(
+              //         height: 160,
+              //         width: MediaQuery.of(context).size.width * 0.9,
+              //         child: Center(
+              //           child: Container(
+              //             height: 150,
+              //             // width: 300,
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.rectangle,
+              //               color: HexColor('33BEA3'),
+              //               borderRadius: BorderRadius.circular(16.0),
+              //               boxShadow: [
+              //                 BoxShadow(
+              //                   color: const Color(0x29000000),
+              //                   offset: Offset(6, 3),
+              //                   blurRadius: 16,
+              //                 ),
+              //               ],
+              //             ),
+              //             child: Row(
+              //               children: [
+              //                 Column(
+              //                   crossAxisAlignment: CrossAxisAlignment.start,
+              //                   children: [
+              //                     Padding(
+              //                         padding: EdgeInsets.all(15.0),
+              //                         child: Text(
+              //                           'Doctors who care',
+              //                           style: TextStyle(
+              //                             fontFamily: 'Arial',
+              //                             fontSize: 20,
+              //                             color: Color(0xffffffff),
+              //                             fontWeight: FontWeight.w700,
+              //                           ),
+              //                           textAlign: TextAlign.center,
+              //                         )),
+              //                     Padding(
+              //                         padding: EdgeInsets.all(10.0),
+              //                         child: Text(
+              //                           'Our doctors listen to you\npatiently and only prescribe \nwhat\'s necessary.',
+              //                           style: TextStyle(
+              //                             fontFamily: 'Arial',
+              //                             fontSize: 16,
+              //                             color: Color(0xffffffff),
+              //                           ),
+              //                           textAlign: TextAlign.left,
+              //                         )),
+              //                   ],
+              //                 ),
+              //                 Container(
+              //                   width: 100,
+              //                   child: Stack(
+              //                     children: [
+              //                       Positioned(
+              //                         right: 10,
+              //                         bottom: 5,
+              //                         child: Padding(
+              //                           padding: EdgeInsets.all(0.0),
+              //                           child: Image.asset(
+              //                             "assets/images/welcome.png",
+              //                             height: 130,
+              //                             width: 80,
+              //                           ),
+              //                         ),
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ]),
+              // ),
             ],
           ),
         ));
@@ -324,9 +555,9 @@ class _HomeState extends State<Home1> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PatientsList();
-                  }));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //   return PatientsList();
+                  // }));
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -341,9 +572,10 @@ class _HomeState extends State<Home1> {
                     ],
                   ),
                   margin: EdgeInsets.all(5),
-                  height: 90,
+                  // height: 0,
                   width: MediaQuery.of(context).size.width,
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -370,12 +602,30 @@ class _HomeState extends State<Home1> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          height: 100,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          // height: 200,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Text(
+                                'Tokon Number',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              Text(
+                                "TKNO#${snapshot.data.appointments[index].tokenNo.toString()}",
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 14,
+                                  color: const Color(0xff000000),
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Patient Name',
+                                style: TextStyle(color: Colors.grey),
+                              ),
                               Text(
                                 snapshot
                                     .data.appointments[index].patient.firstName
@@ -387,25 +637,81 @@ class _HomeState extends State<Home1> {
                                 ),
                                 textAlign: TextAlign.left,
                               ),
-                              Text(
-                                snapshot.data.appointments[index].category.name
-                                    .toString(),
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 12,
-                                  color: const Color(0xff858585),
-                                ),
-                                textAlign: TextAlign.left,
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Date',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      'Time',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                snapshot.data.time[index].toString(),
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 12,
-                                  color: const Color(0xff858585),
-                                ),
-                                textAlign: TextAlign.left,
+                              Row(
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "${snapshot.data.appointments[index].date.day.toString()}-${snapshot.data.appointments[index].date.month.toString()}-${snapshot.data.appointments[index].date.year.toString()}",
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 14,
+                                        color: const Color(0xff000000),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      snapshot.data.time[index].toString(),
+                                      style: TextStyle(
+                                        fontFamily: 'Arial',
+                                        fontSize: 14,
+                                        color: const Color(0xff000000),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
                               ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AppointmentView(
+                                                      snapshot: snapshot,
+                                                      index: index)));
+                                    },
+                                    child: Container(
+                                      height: 25,
+                                      width: 65,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.black),
+                                      child: Center(
+                                        child: Text(
+                                          'View',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
                             ],
                           ),
                         ),
@@ -433,135 +739,102 @@ class _HomeState extends State<Home1> {
   ///Newly Added row................
   ///
 
-  buildHomeMedicineRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(),
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => MoreStories()));
-          },
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: const Color(0xff6b0772),
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Image.asset(
-                    "assets/images/welcome.png",
-                  ),
-                ),
-                // Adobe XD layer: 'surface1' (group)
-                Positioned(
-                  bottom: 4,
-                  right: 3,
-                  child: Container(
-                    height: 15,
-                    width: 15,
-                    child: Stack(
-                      children: <Widget>[
-                        Pinned.fromPins(
-                          Pin(start: 0.0, end: 0.0),
-                          Pin(start: 0.0, end: 0.0),
-                          child: SvgPicture.string(
-                            '<svg viewBox="0.0 0.0 12.5 12.8" ><path transform="translate(-2.0, -2.0)" d="M 8.253783226013184 1.999999761581421 C 4.799543380737305 1.999999761581421 1.999999523162842 4.862797737121582 1.999999523162842 8.395085334777832 C 1.999999523162842 11.92734622955322 4.799543380737305 14.79017162322998 8.253783226013184 14.79017162322998 C 11.70799827575684 14.79017162322998 14.507568359375 11.92734622955322 14.507568359375 8.395085334777832 C 14.507568359375 4.862797737121582 11.70799827575684 1.999999761581421 8.253783226013184 1.999999761581421 Z M 10.75529766082764 9.03459358215332 L 8.87916088104248 9.03459358215332 L 8.87916088104248 10.95312023162842 L 7.628403663635254 10.95312023162842 L 7.628403663635254 9.03459358215332 L 5.752269744873047 9.03459358215332 L 5.752269744873047 7.755575656890869 L 7.628403663635254 7.755575656890869 L 7.628403663635254 5.837050914764404 L 8.87916088104248 5.837050914764404 L 8.87916088104248 7.755575656890869 L 10.75529766082764 7.755575656890869 L 10.75529766082764 9.03459358215332 Z" fill="#f3c306" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                            fit: BoxFit.fill,
+  buildHomeStoryRow(BuildContext context) {
+    return FutureBuilder<Stories>(
+        future: allStory,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return SizedBox(
+              height: 100,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddDoctorStory()));
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: HexColor('33BEA3'),
+                            ),
+                            child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                )
+                                // image: DecorationImage(
+                                //   image: NetworkImage('${AppConfig.STORY_URL}' +
+                                //       widget.snapshot.data.stories[widget.indexs]
+                                //           .stories[index].image),
+                                //   fit: BoxFit.cover,
+                                // ),
+                                ),
                           ),
-                        ),
-                      ],
+                          Text('')
+                        ],
+                      ),
                     ),
                   ),
-                )
-              ],
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //   return Filter(
-            //     selected_filter: "brands",
-            //   );
-            // }));
-          },
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: const Color(0xfff6b2e1),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/images/lady1.png",
+                  ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: snapshot.data.stories.length,
+                      itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                print(snapshot
+                                    .data.stories[index].stories[1].image);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MoreStories(
+                                          indexs: index,
+                                          snapshot: snapshot,
+                                        )));
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: HexColor('33BEA3'),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Image.asset(
+                                        "assets/images/welcome.png",
+                                      ),
+                                      // image: DecorationImage(
+                                      //   image: NetworkImage('${AppConfig.STORY_URL}' +
+                                      //       widget.snapshot.data.stories[widget.indexs]
+                                      //           .stories[index].image),
+                                      //   fit: BoxFit.cover,
+                                      // ),
+                                    ),
+                                  ),
+                                  Text(snapshot.data.stories[index].firstName)
+                                ],
+                              ),
+                            ),
+                          )),
+                ],
               ),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: const Color(0xff6b0772),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/images/lady2.png",
-              ),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: const Color(0xfff6b2e1),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/doctor.png",
-              ),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: const Color(0xfff3c306),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/images/lady.png",
-              ),
-            ),
-          ),
-        ),
-        SizedBox(),
-      ],
-    );
+            );
+          } else {
+            return Center(child: Container());
+          }
+        });
   }
 
   buildHomeMenuRow(BuildContext context) {
@@ -1159,88 +1432,22 @@ class _HomeState extends State<Home1> {
       leading: Container(
         //width: 120,
         child: GestureDetector(
-          onTap: () {
-            _scaffoldKey.currentState.openDrawer();
-          },
-          child: widget.show_back_button
-              ? Builder(
-                  builder: (context) => IconButton(
-                    icon: Icon(Icons.arrow_back, color: MyTheme.dark_grey),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                )
+            onTap: () {
+              _scaffoldKey.currentState.openDrawer();
+            },
+            child: widget.show_back_button
+                ? Builder(
+                    builder: (context) => IconButton(
+                      icon: Icon(Icons.arrow_back, color: MyTheme.dark_grey),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  )
 
-              ///change here
-              : Builder(
-                  builder: (context) => Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-                    child: Container(
-                        child: Stack(
-                      children: <Widget>[
-                        Pinned.fromPins(
-                          Pin(size: 12.0, start: 0.0),
-                          Pin(size: 12.0, start: 0.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(2.0),
-                                topRight: Radius.circular(2.0),
-                                bottomLeft: Radius.circular(2.0),
-                              ),
-                              color: HexColor('33BEA3'),
-                            ),
-                          ),
-                        ),
-                        Pinned.fromPins(
-                          Pin(size: 12.0, end: 0.0),
-                          Pin(size: 12.0, start: 0.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(2.0),
-                                topRight: Radius.circular(2.0),
-                                bottomRight: Radius.circular(2.0),
-                              ),
-                              border: Border.all(
-                                  width: 1.0, color: HexColor('33BEA3')),
-                            ),
-                          ),
-                        ),
-                        Pinned.fromPins(
-                          Pin(size: 12.0, start: 0.0),
-                          Pin(size: 12.0, end: 0.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(2.0),
-                                bottomRight: Radius.circular(2.0),
-                                bottomLeft: Radius.circular(2.0),
-                              ),
-                              color: HexColor('33BEA3'),
-                            ),
-                          ),
-                        ),
-                        Pinned.fromPins(
-                          Pin(size: 12.0, end: 0.0),
-                          Pin(size: 12.0, end: 0.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(2.0),
-                                bottomRight: Radius.circular(2.0),
-                                bottomLeft: Radius.circular(2.0),
-                              ),
-                              border: Border.all(
-                                  width: 1.0, color: HexColor('33BEA3')),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-                  ),
-                ),
-        ),
+                ///change here
+                : Icon(
+                    Icons.menu,
+                    color: Colors.black,
+                  )),
       ),
       actions: [
         Padding(
@@ -1257,15 +1464,10 @@ class _HomeState extends State<Home1> {
               height: 45,
               width: 45,
               child: Center(
-                child: SvgPicture.string(
-                  '<svg viewBox="2.1 0.2 17.0 17.0" ><path transform="translate(0.0, 0.0)" d="M 17.41831588745117 0.1835939884185791 C 16.50238418579102 0.1835939884185791 15.75998306274414 0.8703322410583496 15.75998306274414 1.717566967010498 C 15.75998306274414 1.746510863304138 15.75714302062988 1.772820949554443 15.75998306274414 1.801764369010925 C 13.94231796264648 1.030832648277283 10.7763147354126 1.351833701133728 7.826558589935303 4.080355167388916 C 6.41850757598877 5.382781505584717 3.383384466171265 5.085463523864746 2.512957572937012 5.885339260101318 C 1.648218035697937 6.685214519500732 1.801824688911438 9.332151412963867 5.471277236938477 12.72638416290283 C 9.143613815307617 16.12061882019043 11.97675514221191 16.24691390991211 12.84717655181885 15.44171619415283 C 13.71759510040283 14.63658809661865 13.45872020721436 12.03434944152832 14.97490787506104 10.63195705413818 C 17.85924339294434 7.963977813720703 18.1209602355957 4.974956035614014 17.28461837768555 3.251536130905151 C 17.32729148864746 3.254169702529907 17.37280464172363 3.251536130905151 17.41831588745117 3.251536130905151 C 18.33424758911133 3.251536130905151 19.07672309875488 2.564801931381226 19.07672309875488 1.717566967010498 C 19.07672309875488 0.8703322410583496 18.33424758911133 0.1835939884185791 17.41831588745117 0.1835939884185791 Z M 17.41831588745117 0.9518958926200867 C 17.87344360351562 0.9518958926200867 18.24613571166992 1.296579957008362 18.24613571166992 1.717566967010498 C 18.24613571166992 2.141180992126465 17.87344360351562 2.485865354537964 17.41831588745117 2.485865354537964 C 16.96035194396973 2.485865354537964 16.58773040771484 2.141180992126465 16.58773040771484 1.717566967010498 C 16.58773040771484 1.512334227561951 16.67875671386719 1.325523734092712 16.83524513244629 1.178178191184998 C 16.99166297912598 1.033459663391113 17.19643402099609 0.9518958926200867 17.41831588745117 0.9518958926200867 Z M 14.03334331512451 2.817394018173218 C 14.368971824646 2.830549001693726 14.73591232299805 2.898957967758179 15.13132572174072 3.004204511642456 C 12.8983678817749 2.901591539382935 10.05386543273926 6.195817947387695 8.989963531494141 7.398238182067871 C 8.236202239990234 8.253414154052734 6.967505931854248 9.190093040466309 5.38309907913208 9.305881500244141 C 4.083142280578613 8.60859203338623 4.171327590942383 7.669286727905273 4.171327590942383 7.669286727905273 C 4.171327590942383 7.669286727905273 5.954846858978271 7.908677101135254 8.341426849365234 6.237916946411133 C 10.55734443664551 4.685525417327881 11.67520713806152 2.725302457809448 14.03334331512451 2.817394018173218 Z M 6.412820339202881 14.40507793426514 C 5.997519493103027 14.68393993377686 5.718756675720215 15.13651847839355 5.718756675720215 15.64958381652832 C 5.718756675720215 16.49681091308594 6.461180210113525 17.18359375 7.377119064331055 17.18359375 C 8.187849044799805 17.18359375 8.864785194396973 16.64681816101074 9.01275634765625 15.93902015686035 C 8.261761665344238 15.62331390380859 7.385653972625732 15.13651847839355 6.412820339202881 14.40507793426514 Z" fill="#858585" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                  allowDrawingOutsideViewBox: true,
-                  fit: BoxFit.fill,
-                  height: 25,
-                  width: 25,
-                  color: HexColor('33BEA3'),
-                ),
-              ),
+                  child: ImageIcon(
+                AssetImage('assets/images/Notification.png'),
+                color: Colors.black,
+              )),
             ),
           ),
         ),

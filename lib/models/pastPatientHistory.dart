@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-PastPatientHistory pastPatientHistoryFromJson(String str) => PastPatientHistory.fromJson(json.decode(str));
+PastPatientHistory pastPatientHistoryFromJson(String str) =>
+    PastPatientHistory.fromJson(json.decode(str));
 
-String pastPatientHistoryToJson(PastPatientHistory data) => json.encode(data.toJson());
+String pastPatientHistoryToJson(PastPatientHistory data) =>
+    json.encode(data.toJson());
 
 class PastPatientHistory {
   PastPatientHistory({
@@ -17,19 +19,21 @@ class PastPatientHistory {
 
   bool result;
   List<Appointment> appointments;
-  List<String> time;
+  List<Time> time;
 
-  factory PastPatientHistory.fromJson(Map<String, dynamic> json) => PastPatientHistory(
-    result: json["result"],
-    appointments: List<Appointment>.from(json["appointments"].map((x) => Appointment.fromJson(x))),
-    time: List<String>.from(json["time"].map((x) => x)),
-  );
+  factory PastPatientHistory.fromJson(Map<String, dynamic> json) =>
+      PastPatientHistory(
+        result: json["result"],
+        appointments: List<Appointment>.from(
+            json["appointments"].map((x) => Appointment.fromJson(x))),
+        time: List<Time>.from(json["time"].map((x) => timeValues.map[x])),
+      );
 
   Map<String, dynamic> toJson() => {
-    "result": result,
-    "appointments": List<dynamic>.from(appointments.map((x) => x.toJson())),
-    "time": List<dynamic>.from(time.map((x) => x)),
-  };
+        "result": result,
+        "appointments": List<dynamic>.from(appointments.map((x) => x.toJson())),
+        "time": List<dynamic>.from(time.map((x) => timeValues.reverse[x])),
+      };
 }
 
 class Appointment {
@@ -42,6 +46,7 @@ class Appointment {
     this.date,
     this.method,
     this.paymentStatus,
+    this.paymentId,
     this.status,
     this.weight,
     this.bloodPressure,
@@ -50,34 +55,10 @@ class Appointment {
     this.problem,
     this.createdAt,
     this.updatedAt,
-    this.fees,
-    this.startDate,
-    this.designation,
-    this.education,
-    this.experiance,
-    this.qualification,
-    this.details,
     this.firstName,
     this.lastName,
-    this.email,
     this.phone,
-    this.dob,
-    this.address,
-    this.pin,
-    this.place,
-    this.city,
-    this.state,
-    this.country,
-    this.bloodGroup,
-    this.gender,
-    this.image,
-    this.emailVerifiedAt,
-    this.password,
-    this.activeStatus,
-    this.avatar,
-    this.darkMode,
-    this.messengerColor,
-    this.rememberToken,
+    this.email,
     this.category,
   });
 
@@ -87,141 +68,73 @@ class Appointment {
   int doctorId;
   int tokenNo;
   DateTime date;
-  String method;
-  String paymentStatus;
-  String status;
-  int weight;
-  int bloodPressure;
-  int pulse;
-  int temperature;
-  String problem;
+  Method method;
+  PaymentStatus paymentStatus;
+  String paymentId;
+  Status status;
+  dynamic weight;
+  dynamic bloodPressure;
+  dynamic pulse;
+  dynamic temperature;
+  dynamic problem;
   DateTime createdAt;
   DateTime updatedAt;
-  int fees;
-  DateTime startDate;
-  String designation;
-  String education;
-  String experiance;
-  String qualification;
-  String details;
-  String firstName;
-  String lastName;
-  String email;
+  FirstName firstName;
+  LastName lastName;
   String phone;
-  DateTime dob;
-  String address;
-  String pin;
-  String place;
-  dynamic city;
-  dynamic state;
-  dynamic country;
-  dynamic bloodGroup;
-  String gender;
-  String image;
-  dynamic emailVerifiedAt;
-  String password;
-  int activeStatus;
-  String avatar;
-  int darkMode;
-  String messengerColor;
-  dynamic rememberToken;
+  Email email;
   Category category;
 
   factory Appointment.fromJson(Map<String, dynamic> json) => Appointment(
-    id: json["id"],
-    userId: json["user_id"],
-    categoryId: json["category_id"],
-    doctorId: json["doctor_id"],
-    tokenNo: json["token_no"],
-    date: DateTime.parse(json["date"]),
-    method: json["method"] == null ? null : json["method"],
-    paymentStatus: json["payment_status"],
-    status: json["status"],
-    weight: json["weight"] == null ? null : json["weight"],
-    bloodPressure: json["blood_pressure"] == null ? null : json["blood_pressure"],
-    pulse: json["pulse"] == null ? null : json["pulse"],
-    temperature: json["temperature"] == null ? null : json["temperature"],
-    problem: json["problem"] == null ? null : json["problem"],
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
-    fees: json["fees"],
-    startDate: DateTime.parse(json["start_date"]),
-    designation: json["designation"],
-    education: json["education"],
-    experiance: json["experiance"],
-    qualification: json["qualification"],
-    details: json["details"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    email: json["email"],
-    phone: json["phone"],
-    dob: DateTime.parse(json["dob"]),
-    address: json["address"],
-    pin: json["pin"],
-    place: json["place"],
-    city: json["city"],
-    state: json["state"],
-    country: json["country"],
-    bloodGroup: json["blood_group"],
-    gender: json["gender"],
-    image: json["image"],
-    emailVerifiedAt: json["email_verified_at"],
-    password: json["password"],
-    activeStatus: json["active_status"],
-    avatar: json["avatar"],
-    darkMode: json["dark_mode"],
-    messengerColor: json["messenger_color"],
-    rememberToken: json["remember_token"],
-    category: Category.fromJson(json["category"]),
-  );
+        id: json["id"],
+        userId: json["user_id"],
+        categoryId: json["category_id"],
+        doctorId: json["doctor_id"],
+        tokenNo: json["token_no"],
+        date: DateTime.parse(json["date"]),
+        method: methodValues.map[json["method"]],
+        paymentStatus: paymentStatusValues.map[json["payment_status"]],
+        paymentId: json["payment_id"] == null ? null : json["payment_id"],
+        status: statusValues.map[json["status"]],
+        weight: json["weight"],
+        bloodPressure: json["blood_pressure"],
+        pulse: json["pulse"],
+        temperature: json["temperature"],
+        problem: json["problem"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+        firstName: firstNameValues.map[json["first_name"]],
+        lastName: lastNameValues.map[json["last_name"]],
+        phone: json["phone"],
+        email: emailValues.map[json["email"]],
+        category: Category.fromJson(json["category"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "user_id": userId,
-    "category_id": categoryId,
-    "doctor_id": doctorId,
-    "token_no": tokenNo,
-    "date": "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
-    "method": method == null ? null : method,
-    "payment_status": paymentStatus,
-    "status": status,
-    "weight": weight == null ? null : weight,
-    "blood_pressure": bloodPressure == null ? null : bloodPressure,
-    "pulse": pulse == null ? null : pulse,
-    "temperature": temperature == null ? null : temperature,
-    "problem": problem == null ? null : problem,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
-    "fees": fees,
-    "start_date": "${startDate.year.toString().padLeft(4, '0')}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}",
-    "designation": designation,
-    "education": education,
-    "experiance": experiance,
-    "qualification": qualification,
-    "details": details,
-    "first_name": firstName,
-    "last_name": lastName,
-    "email": email,
-    "phone": phone,
-    "dob": "${dob.year.toString().padLeft(4, '0')}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}",
-    "address": address,
-    "pin": pin,
-    "place": place,
-    "city": city,
-    "state": state,
-    "country": country,
-    "blood_group": bloodGroup,
-    "gender": gender,
-    "image": image,
-    "email_verified_at": emailVerifiedAt,
-    "password": password,
-    "active_status": activeStatus,
-    "avatar": avatar,
-    "dark_mode": darkMode,
-    "messenger_color": messengerColor,
-    "remember_token": rememberToken,
-    "category": category.toJson(),
-  };
+        "id": id,
+        "user_id": userId,
+        "category_id": categoryId,
+        "doctor_id": doctorId,
+        "token_no": tokenNo,
+        "date":
+            "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
+        "method": methodValues.reverse[method],
+        "payment_status": paymentStatusValues.reverse[paymentStatus],
+        "payment_id": paymentId == null ? null : paymentId,
+        "status": statusValues.reverse[status],
+        "weight": weight,
+        "blood_pressure": bloodPressure,
+        "pulse": pulse,
+        "temperature": temperature,
+        "problem": problem,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+        "first_name": firstNameValues.reverse[firstName],
+        "last_name": lastNameValues.reverse[lastName],
+        "phone": phone,
+        "email": emailValues.reverse[email],
+        "category": category.toJson(),
+      };
 }
 
 class Category {
@@ -233,21 +146,84 @@ class Category {
   });
 
   int id;
-  String name;
+  Name name;
   DateTime createdAt;
   DateTime updatedAt;
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
-    id: json["id"],
-    name: json["name"],
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
-  );
+        id: json["id"],
+        name: nameValues.map[json["name"]],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
-  };
+        "id": id,
+        "name": nameValues.reverse[name],
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
+      };
+}
+
+enum Name { OPHTHALMOLOGISTS }
+
+final nameValues = EnumValues({"Ophthalmologists": Name.OPHTHALMOLOGISTS});
+
+enum Email { ALTHAF_GMAIL_COM }
+
+final emailValues = EnumValues({"althaf@gmail.com": Email.ALTHAF_GMAIL_COM});
+
+enum FirstName { ALTHAF }
+
+final firstNameValues = EnumValues({"althaf": FirstName.ALTHAF});
+
+enum LastName { AK }
+
+final lastNameValues = EnumValues({"ak": LastName.AK});
+
+enum Method { CALL, VIDEO, CHAT }
+
+final methodValues = EnumValues(
+    {"call": Method.CALL, "chat": Method.CHAT, "video": Method.VIDEO});
+
+enum PaymentStatus { UNPAID, PAID }
+
+final paymentStatusValues =
+    EnumValues({"paid": PaymentStatus.PAID, "unpaid": PaymentStatus.UNPAID});
+
+enum Status { NEW, COMPLETED }
+
+final statusValues =
+    EnumValues({"completed": Status.COMPLETED, "new": Status.NEW});
+
+enum Time {
+  THE_0900_AM_TO_0910_AM,
+  THE_1000_AM_TO_1010_AM,
+  THE_0924_AM_TO_0934_AM,
+  THE_0948_AM_TO_0958_AM,
+  THE_1012_AM_TO_1022_AM,
+  THE_1036_AM_TO_1046_AM
+}
+
+final timeValues = EnumValues({
+  "09:00 AM to 09:10 AM": Time.THE_0900_AM_TO_0910_AM,
+  "09:24 AM to 09:34 AM": Time.THE_0924_AM_TO_0934_AM,
+  "09:48 AM to 09:58 AM": Time.THE_0948_AM_TO_0958_AM,
+  "10:00 AM to 10:10 AM": Time.THE_1000_AM_TO_1010_AM,
+  "10:12 AM to 10:22 AM": Time.THE_1012_AM_TO_1022_AM,
+  "10:36 AM to 10:46 AM": Time.THE_1036_AM_TO_1046_AM
+});
+
+class EnumValues<T> {
+  Map<String, T> map;
+  Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    if (reverseMap == null) {
+      reverseMap = map.map((k, v) => new MapEntry(v, k));
+    }
+    return reverseMap;
+  }
 }

@@ -75,20 +75,27 @@ class _ProfileEditState extends State<DoctorProfileEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DoctorDrawer(),
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: buildAppBar(context),
-      body: buildBody(context),
-    );
+        drawer: DoctorDrawer(),
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        appBar: buildAppBar(context),
+        body: WillPopScope(
+          onWillPop: () async {
+            // You can do some work here.
+            // Returning true allows the pop to happen, returning false prevents it.
+            return widget.is_base_category;
+          },
+          child: buildBody(context),
+        ));
   }
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      toolbarHeight: 90,
       backgroundColor: Colors.white,
+      toolbarHeight: 100,
+      // backgroundColor:  Color(0xff6b0772),
       flexibleSpace: Container(
-        // height: 120,
+        // height: 10,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -104,116 +111,37 @@ class _ProfileEditState extends State<DoctorProfileEdit> {
             ),
           ],
         ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 25,
-            ),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _scaffoldKey.currentState.openDrawer();
-                  },
-                  child: widget.is_base_category
-                      ? Builder(
-                          builder: (context) => Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 25.0, horizontal: 25.0),
-                            child: Container(
-                                height: 30,
-                                width: 30,
-                                //color: Colors.white,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, start: 0.0),
-                                      Pin(size: 12.0, start: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(2.0),
-                                            topRight: Radius.circular(2.0),
-                                            bottomLeft: Radius.circular(2.0),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, end: 0.0),
-                                      Pin(size: 12.0, start: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(2.0),
-                                            topRight: Radius.circular(2.0),
-                                            bottomRight: Radius.circular(2.0),
-                                          ),
-                                          border: Border.all(
-                                            width: 1.0,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, start: 0.0),
-                                      Pin(size: 12.0, end: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(2.0),
-                                            bottomRight: Radius.circular(2.0),
-                                            bottomLeft: Radius.circular(2.0),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Pinned.fromPins(
-                                      Pin(size: 12.0, end: 0.0),
-                                      Pin(size: 12.0, end: 0.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(2.0),
-                                            bottomRight: Radius.circular(2.0),
-                                            bottomLeft: Radius.circular(2.0),
-                                          ),
-                                          border: Border.all(
-                                            width: 1.0,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        )
-                      : Builder(
-                          builder: (context) => IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.white),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ),
-                ),
-                Text(
-                  'Profile',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 24,
-                    color: const Color(0xffffffff),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
+      title: Text(
+        'Profile',
+        style: TextStyle(
+          fontFamily: 'Arial',
+          fontSize: 24,
+          color: const Color(0xffffffff),
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      leading: GestureDetector(
+        onTap: () {
+          _scaffoldKey.currentState.openDrawer();
+        },
+        child: widget.is_base_category
+            ? Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Icon(
+                  Icons.menu,
+                  color: Colors.black,
+                ),
+              )
+            : Builder(
+                builder: (context) => IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+      ),
+
       automaticallyImplyLeading: false,
       elevation: 0.0,
       titleSpacing: 0,

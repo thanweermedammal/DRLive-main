@@ -1,3 +1,4 @@
+import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
@@ -8,6 +9,7 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 import 'package:flutter_hex_color/flutter_hex_color.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileEdit extends StatefulWidget {
   ProfileEdit(
@@ -23,7 +25,8 @@ class ProfileEdit extends StatefulWidget {
 class _ProfileEditState extends State<ProfileEdit> {
   ScrollController _mainScrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  final ImagePicker _picker = ImagePicker();
+  String image = "";
   TextEditingController _nameController =
       TextEditingController(text: "${user_name.$ ?? ""}");
   TextEditingController _phoneController =
@@ -36,6 +39,14 @@ class _ProfileEditState extends State<ProfileEdit> {
       TextEditingController(text: "${user_blood.$ ?? ""}");
   TextEditingController _emailController =
       TextEditingController(text: "${user_email.$ ?? ""}");
+  TextEditingController _cityController =
+      TextEditingController(text: "${user_city.$ ?? ""}");
+  TextEditingController _stateController =
+      TextEditingController(text: "${user_state.$ ?? ""}");
+  TextEditingController _pinController =
+      TextEditingController(text: "${user_pin.$ ?? ""}");
+  TextEditingController _countryController =
+      TextEditingController(text: "${user_country.$ ?? ""}");
 
   int _radioValue1 = 0;
 
@@ -223,123 +234,37 @@ class _ProfileEditState extends State<ProfileEdit> {
             ),
           ],
         ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 60,
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: GestureDetector(
-                      onTap: () {
-                        _scaffoldKey.currentState.openDrawer();
-                      },
-                      child: Icon(
-                        Icons.menu,
-                        color: Colors.black,
-                      )
-                      // widget.is_base_category
-                      //     ? Builder(
-                      //         builder: (context) => Padding(
-                      //           padding: EdgeInsets.symmetric(
-                      //               vertical: 10.0, horizontal: 10.0),
-                      //           child: Container(
-                      //               height: 30,
-                      //               width: 30,
-                      //               //color: Colors.white,
-                      //               child: Stack(
-                      //                 children: <Widget>[
-                      //                   Pinned.fromPins(
-                      //                     Pin(size: 12.0, start: 0.0),
-                      //                     Pin(size: 12.0, start: 0.0),
-                      //                     child: Container(
-                      //                       decoration: BoxDecoration(
-                      //                         borderRadius: BorderRadius.only(
-                      //                           topLeft: Radius.circular(2.0),
-                      //                           topRight: Radius.circular(2.0),
-                      //                           bottomLeft: Radius.circular(2.0),
-                      //                         ),
-                      //                         color: Colors.white,
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                   Pinned.fromPins(
-                      //                     Pin(size: 12.0, end: 0.0),
-                      //                     Pin(size: 12.0, start: 0.0),
-                      //                     child: Container(
-                      //                       decoration: BoxDecoration(
-                      //                         borderRadius: BorderRadius.only(
-                      //                           topLeft: Radius.circular(2.0),
-                      //                           topRight: Radius.circular(2.0),
-                      //                           bottomRight: Radius.circular(2.0),
-                      //                         ),
-                      //                         border: Border.all(
-                      //                           width: 1.0,
-                      //                           color: Colors.white,
-                      //                         ),
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                   Pinned.fromPins(
-                      //                     Pin(size: 12.0, start: 0.0),
-                      //                     Pin(size: 12.0, end: 0.0),
-                      //                     child: Container(
-                      //                       decoration: BoxDecoration(
-                      //                         borderRadius: BorderRadius.only(
-                      //                           topLeft: Radius.circular(2.0),
-                      //                           bottomRight: Radius.circular(2.0),
-                      //                           bottomLeft: Radius.circular(2.0),
-                      //                         ),
-                      //                         color: Colors.white,
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                   Pinned.fromPins(
-                      //                     Pin(size: 12.0, end: 0.0),
-                      //                     Pin(size: 12.0, end: 0.0),
-                      //                     child: Container(
-                      //                       decoration: BoxDecoration(
-                      //                         borderRadius: BorderRadius.only(
-                      //                           topRight: Radius.circular(2.0),
-                      //                           bottomRight: Radius.circular(2.0),
-                      //                           bottomLeft: Radius.circular(2.0),
-                      //                         ),
-                      //                         border: Border.all(
-                      //                           width: 1.0,
-                      //                           color: Colors.white,
-                      //                         ),
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               )),
-                      //         ),
-                      //       )
-                      //     : Builder(
-                      //         builder: (context) => IconButton(
-                      //           icon: Icon(Icons.arrow_back, color: Colors.white),
-                      //           onPressed: () => Navigator.of(context).pop(),
-                      //         ),
-                      //       ),
-                      ),
-                ),
-                Text(
-                  'Profile',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 24,
-                    color: const Color(0xffffffff),
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
+      title: Text(
+        'Profile',
+        style: TextStyle(
+          fontFamily: 'Arial',
+          fontSize: 24,
+          color: const Color(0xffffffff),
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      leading: GestureDetector(
+        onTap: () {
+          _scaffoldKey.currentState.openDrawer();
+        },
+        child: widget.is_base_category
+            ? Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Icon(
+                  Icons.menu,
+                  color: Colors.black,
+                ),
+              )
+            : Builder(
+                builder: (context) => IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+      ),
+
       automaticallyImplyLeading: false,
       elevation: 0.0,
       titleSpacing: 0,
@@ -394,6 +319,11 @@ class _ProfileEditState extends State<ProfileEdit> {
                     borderRadius:
                         BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                     color: const Color(0xfff3c306),
+                    image: DecorationImage(
+                        image: image == ""
+                            ? AssetImage('')
+                            : FileImage(File(image)),
+                        fit: BoxFit.fill),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0x29000000),
@@ -403,13 +333,24 @@ class _ProfileEditState extends State<ProfileEdit> {
                     ],
                   ),
                   child: Center(
-                    child: Container(
-                      height: 80,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: const AssetImage('assets/images/lady2.png'),
-                          fit: BoxFit.fill,
+                    child: InkWell(
+                      onTap: () async {
+                        final XFile photo = await _picker.pickImage(
+                            source: ImageSource.gallery);
+                        setState(() {
+                          image = photo.path;
+                        });
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: image == ""
+                                ? AssetImage('assets/images/lady2.png')
+                                : AssetImage(''),
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       ),
                     ),
@@ -579,7 +520,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                     height: 40,
                     width: MediaQuery.of(context).size.width * 0.5 - 28,
                     child: TextField(
-                      //  controller: _nameController,
+                      controller: _cityController,
                       autofocus: false,
                       decoration: InputDecorations.buildInputDecoration_1(
                           hint_text: "City"),
@@ -595,7 +536,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                     width: MediaQuery.of(context).size.width * 0.5 - 28,
                     height: 40,
                     child: TextField(
-                      // controller: _nameController,
+                      controller: _stateController,
                       autofocus: false,
                       decoration: InputDecorations.buildInputDecoration_1(
                           hint_text: "State"),
@@ -614,7 +555,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                     height: 40,
                     width: MediaQuery.of(context).size.width * 0.5 - 28,
                     child: TextField(
-                      //  controller: _nameController,
+                      controller: _pinController,
                       autofocus: false,
                       decoration: InputDecorations.buildInputDecoration_1(
                           hint_text: "Pin"),
@@ -630,7 +571,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                     width: MediaQuery.of(context).size.width * 0.5 - 28,
                     height: 40,
                     child: TextField(
-                      // controller: _nameController,
+                      controller: _countryController,
                       autofocus: false,
                       decoration: InputDecorations.buildInputDecoration_1(
                           hint_text: "Country"),
@@ -649,10 +590,37 @@ class _ProfileEditState extends State<ProfileEdit> {
                   Spacer(),
                   GestureDetector(
                     onTap: () {
-                      UserData().updateProfile(
-                          _nameController.text.toString(),
-                          _bloodController.text.toString(),
-                          _emailController.text.toString());
+                      DoctorsData()
+                          .profileEdit(
+                              user_id.$,
+                              _nameController.text,
+                              _bloodController.text,
+                              _dobController.text,
+                              _emailController.text,
+                              _addressController.text,
+                              _pinController.text,
+                              _cityController.text,
+                              _stateController.text,
+                              _countryController.text,
+                              _radioValue1 == 0
+                                  ? "male"
+                                  : _radioValue1 == 1
+                                      ? "female"
+                                      : "other")
+                          .then((value) => {
+                                if (value)
+                                  {
+                                    user_blood.$ = _bloodController.text,
+                                    user_dob.$ = _dobController.text,
+                                    user_email.$ = _emailController.text,
+                                    user_address.$ = _addressController.text,
+                                    user_pin.$ = _pinController.text,
+                                    user_city.$ = _cityController.text,
+                                    user_state.$ = _stateController.text,
+                                    user_country.$ = _countryController.text,
+                                    getGender()
+                                  }
+                              });
                     },
                     child: Container(
                       width: 100,

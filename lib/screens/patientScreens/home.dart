@@ -1,7 +1,11 @@
+import 'package:active_ecommerce_flutter/data_handler/notification_handler.dart';
+import 'package:active_ecommerce_flutter/models/stories.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/screens/new_doctor_screens/doctor_screen.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/finddoctorscreen.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/meeting1_scree.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/payment_screen.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/storieslist.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/storypage.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/doctors_list.dart';
 import 'package:flutter/material.dart';
@@ -37,12 +41,16 @@ class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Future<Doctors> futureAlbum;
   Future<Banners> fetchBanner;
+  // Future<Stori> fetchStory;
+  Future<Stories> allStory;
 
   @override
   void initState() {
     super.initState();
     futureAlbum = DoctorsData().fetchAlbum();
     fetchBanner = BannerData().fetchBanners();
+    allStory = NotificationHandler().allStories();
+    // fetchStory = DoctorsData().stories();
   }
 
   @override
@@ -55,184 +63,145 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.white,
         appBar: buildAppBar(statusBarHeight, context),
         drawer: MainDrawer(),
-        body: WillPopScope(
-          onWillPop: () async {
-            // You can do some work here.
-            // Returning true allows the pop to happen, returning false prevents it.
-            return false;
+        body: RefreshIndicator(
+          onRefresh: () async {
+            futureAlbum = DoctorsData().fetchAlbum();
+            fetchBanner = BannerData().fetchBanners();
+            setState(() {});
           },
-          child: CustomScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            slivers: <Widget>[
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      8.0,
-                      16.0,
-                      8.0,
-                      0.0,
-                    ),
-                    child: buildHomeStoryRow(context),
-                  ),
-                  // Padding(
-                  //   padding: EdgeInsets.all(8.0),
-                  //   child: Text.rich(
-                  //     TextSpan(
-                  //       style: TextStyle(
-                  //         fontFamily: 'Arial',
-                  //         fontSize: 26,
-                  //         color: const Color(0xff858585),
-                  //       ),
-                  //       children: [
-                  //         TextSpan(
-                  //           text: '\n   Hello,\n',
-                  //         ),
-                  //         TextSpan(
-                  //           text: '      ' + user_name.$.toUpperCase(),
-                  //           style: TextStyle(
-                  //             fontFamily: 'Arial',
-                  //             fontSize: 26,
-                  //             color: const Color(0xff858585),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     textHeightBehavior:
-                  //         TextHeightBehavior(applyHeightToFirstAscent: false),
-                  //     textAlign: TextAlign.left,
-                  //   ),
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.fromLTRB(
-                  //     8.0,
-                  //     16.0,
-                  //     8.0,
-                  //     0.0,
-                  //   ),
-                  //   child: buildHomeSearchBox(context),
-                  // ),
-                  SizedBox(
-                    height: 30,
-                  )
-                ]),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: EdgeInsets.all(0.0),
-                    child: Container(
-                      height: 180,
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: FutureBuilder<Banners>(
-                          future: fetchBanner,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Container(
-                                height: 110,
-                                child: CarouselSlider.builder(
-                                  options: CarouselOptions(
-                                    height: 180.0,
-                                    enlargeCenterPage: true,
-                                    autoPlay: true,
-                                    aspectRatio: 16 / 9,
-                                    autoPlayCurve: Curves.fastOutSlowIn,
-                                    enableInfiniteScroll: true,
-                                    autoPlayAnimationDuration:
-                                        Duration(milliseconds: 800),
-                                    viewportFraction: 0.8,
-                                  ),
-                                  itemCount: snapshot.data.banners.length,
-                                  itemBuilder: (BuildContext context,
-                                          int itemIndex, int) =>
-                                      Container(
-                                    margin: EdgeInsets.all(6.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            '${AppConfig.BANNER_URL}' +
-                                                snapshot.data.banners[itemIndex]
-                                                    .image),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Center(
-                                  child: Container(
-                                      height: 40,
-                                      width: 40,
-                                      child: CircularProgressIndicator()));
-                            }
-                          }),
-                    ),
-                  ),
-                  Padding(
+          child: WillPopScope(
+            onWillPop: () async {
+              // You can do some work here.
+              // Returning true allows the pop to happen, returning false prevents it.
+              return false;
+            },
+            child: CustomScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
                       padding: const EdgeInsets.fromLTRB(
-                        16.0,
+                        8.0,
                         16.0,
                         8.0,
                         0.0,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Menu',
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 15,
-                                  color: Colors.grey,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                'Categories',
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 24,
-                                  color: const Color(0xff000000),
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          buildHomeMenuRow(context),
-                        ],
-                      )),
-                ]),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      16.0,
-                      16.0,
-                      8.0,
-                      0.0,
+                      child: buildHomeStoryRow(context),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                    // Padding(
+                    //   padding: EdgeInsets.all(8.0),
+                    //   child: Text.rich(
+                    //     TextSpan(
+                    //       style: TextStyle(
+                    //         fontFamily: 'Arial',
+                    //         fontSize: 26,
+                    //         color: const Color(0xff858585),
+                    //       ),
+                    //       children: [
+                    //         TextSpan(
+                    //           text: '\n   Hello,\n',
+                    //         ),
+                    //         TextSpan(
+                    //           text: '      ' + user_name.$.toUpperCase(),
+                    //           style: TextStyle(
+                    //             fontFamily: 'Arial',
+                    //             fontSize: 26,
+                    //             color: const Color(0xff858585),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     textHeightBehavior:
+                    //         TextHeightBehavior(applyHeightToFirstAscent: false),
+                    //     textAlign: TextAlign.left,
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(
+                    //     8.0,
+                    //     16.0,
+                    //     8.0,
+                    //     0.0,
+                    //   ),
+                    //   child: buildHomeSearchBox(context),
+                    // ),
+                  ]),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
+                      padding: EdgeInsets.all(0.0),
+                      child: Container(
+                        height: 180,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: FutureBuilder<Banners>(
+                            future: fetchBanner,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Container(
+                                  height: 110,
+                                  child: CarouselSlider.builder(
+                                    options: CarouselOptions(
+                                      height: 180.0,
+                                      enlargeCenterPage: true,
+                                      autoPlay: true,
+                                      aspectRatio: 16 / 9,
+                                      autoPlayCurve: Curves.fastOutSlowIn,
+                                      enableInfiniteScroll: true,
+                                      autoPlayAnimationDuration:
+                                          Duration(milliseconds: 800),
+                                      viewportFraction: 0.8,
+                                    ),
+                                    itemCount: snapshot.data.banners.length,
+                                    itemBuilder: (BuildContext context,
+                                            int itemIndex, int) =>
+                                        Container(
+                                      margin: EdgeInsets.all(6.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              '${AppConfig.BANNER_URL}' +
+                                                  snapshot
+                                                      .data
+                                                      .banners[itemIndex]
+                                                      .image),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return Center(
+                                    child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        child: CircularProgressIndicator()));
+                              }
+                            }),
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          16.0,
+                          16.0,
+                          8.0,
+                          0.0,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Top Listed',
+                                  'Menu',
                                   style: TextStyle(
                                     fontFamily: 'Arial',
                                     fontSize: 15,
@@ -241,7 +210,7 @@ class _HomeState extends State<Home> {
                                   textAlign: TextAlign.left,
                                 ),
                                 Text(
-                                  'Doctors',
+                                  'Categories',
                                   style: TextStyle(
                                     fontFamily: 'Arial',
                                     fontSize: 24,
@@ -251,295 +220,344 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return DoctorsList();
-                                }));
-                              },
-                              child: Text(
-                                'See All',
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 14,
-                                  color: const Color(0xff000000),
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              //height: 300,
-                              //color: Colors.pink,
-                              child: buildDoctorOnlineRow()),
-                        ),
-                      ],
-                    ),
-                  ),
-                ]),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      16.0,
-                      16.0,
-                      8.0,
-                      0.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Experience Us',
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 22,
-                                color: const Color(0xff000000),
-                              ),
-                              textAlign: TextAlign.left,
+                            SizedBox(
+                              height: 10,
                             ),
+                            buildHomeMenuRow(context),
                           ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ]),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Container(
-                      height: 160,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: ListView(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
+                        )),
+                  ]),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        16.0,
+                        16.0,
+                        8.0,
+                        0.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            height: 150,
-                            // width: 300,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              color: HexColor('33BEA3'),
-                              borderRadius: BorderRadius.circular(16.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0x29000000),
-                                  offset: Offset(6, 3),
-                                  blurRadius: 16,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.all(15.0),
-                                        child: Text(
-                                          'Doctors who care',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 20,
-                                            color: Color(0xffffffff),
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        )),
-                                    Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'Our doctors listen to you\npatiently and only prescribe \nwhat\'s necessary.',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 16,
-                                            color: Color(0xffffffff),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        )),
-                                  ],
-                                ),
-                                Container(
-                                  width: 100,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        right: 10,
-                                        bottom: 5,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(0.0),
-                                          child: Image.asset(
-                                            "assets/images/welcome.png",
-                                            height: 130,
-                                            width: 80,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            height: 150,
-                            // width: 335,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              shape: BoxShape.rectangle,
-                              color: const Color(0xfff3c306),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0x29000000),
-                                  offset: Offset(6, 3),
-                                  blurRadius: 16,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.all(15.0),
-                                      child: Text(
-                                        'Curated Doctors',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 20,
-                                          color: const Color(0xff000000),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
+                          Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Top Listed',
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 15,
+                                      color: Colors.grey,
                                     ),
-                                    Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'We hand-pick doctors for you,\nonboarding after a multi-step \nscreening process.',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 16,
-                                            color: const Color(0xff000000),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        )),
-                                  ],
-                                ),
-                                Container(
-                                  width: 100,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        right: 10,
-                                        bottom: 5,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(0.0),
-                                          child: Image.asset(
-                                            "assets/images/exp2.png",
-                                            height: 130,
-                                            width: 80,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    textAlign: TextAlign.left,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            height: 150,
-                            // width: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              shape: BoxShape.rectangle,
-                              color: const Color(0xfffdb0c7),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0x29000000),
-                                  offset: Offset(6, 3),
-                                  blurRadius: 16,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.all(15.0),
-                                        child: Text(
-                                          'Secure',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 20,
-                                            color: const Color(0xff000000),
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        )),
-                                    Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Text(
-                                          'Noting is hidden. Access your\n records in your health locker,\n24*7  ',
-                                          style: TextStyle(
-                                            fontFamily: 'Arial',
-                                            fontSize: 16,
-                                            color: const Color(0xff000000),
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        )),
-                                  ],
-                                ),
-                                Container(
-                                  width: 100,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        right: 10,
-                                        bottom: 5,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(0.0),
-                                          child: Image.asset(
-                                            "assets/images/exp3.png",
-                                            height: 130,
-                                            width: 80,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  Text(
+                                    'Doctors',
+                                    style: TextStyle(
+                                      fontFamily: 'Arial',
+                                      fontSize: 24,
+                                      color: const Color(0xff000000),
+                                    ),
+                                    textAlign: TextAlign.left,
                                   ),
+                                ],
+                              ),
+                              Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return DoctorsList();
+                                  }));
+                                },
+                                child: Text(
+                                  'See All',
+                                  style: TextStyle(
+                                    fontFamily: 'Arial',
+                                    fontSize: 14,
+                                    color: const Color(0xff000000),
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                //height: 300,
+                                //color: Colors.pink,
+                                child: buildDoctorOnlineRow()),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ]),
-              ),
-            ],
+                  ]),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        16.0,
+                        16.0,
+                        8.0,
+                        0.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Experience Us',
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 22,
+                                  color: const Color(0xff000000),
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child: Container(
+                        height: 160,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            Container(
+                              height: 150,
+                              // width: 300,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                color: HexColor('33BEA3'),
+                                borderRadius: BorderRadius.circular(16.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(6, 3),
+                                    blurRadius: 16,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.all(15.0),
+                                          child: Text(
+                                            'Doctors who care',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 20,
+                                              color: Color(0xffffffff),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )),
+                                      Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Our doctors listen to you\npatiently and only prescribe \nwhat\'s necessary.',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 16,
+                                              color: Color(0xffffffff),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          )),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 100,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          right: 10,
+                                          bottom: 5,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(0.0),
+                                            child: Image.asset(
+                                              "assets/images/welcome.png",
+                                              height: 130,
+                                              width: 80,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              height: 150,
+                              // width: 335,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.0),
+                                shape: BoxShape.rectangle,
+                                color: const Color(0xfff3c306),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(6, 3),
+                                    blurRadius: 16,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(15.0),
+                                        child: Text(
+                                          'Curated Doctors',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 20,
+                                            color: const Color(0xff000000),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'We hand-pick doctors for you,\nonboarding after a multi-step \nscreening process.',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 16,
+                                              color: const Color(0xff000000),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          )),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 100,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          right: 10,
+                                          bottom: 5,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(0.0),
+                                            child: Image.asset(
+                                              "assets/images/exp2.png",
+                                              height: 130,
+                                              width: 80,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              height: 150,
+                              // width: 300,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.0),
+                                shape: BoxShape.rectangle,
+                                color: const Color(0xfffdb0c7),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(6, 3),
+                                    blurRadius: 16,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.all(15.0),
+                                          child: Text(
+                                            'Secure',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 20,
+                                              color: const Color(0xff000000),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )),
+                                      Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Noting is hidden. Access your\n records in your health locker,\n24*7  ',
+                                            style: TextStyle(
+                                              fontFamily: 'Arial',
+                                              fontSize: 16,
+                                              color: const Color(0xff000000),
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          )),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 100,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          right: 10,
+                                          bottom: 5,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(0.0),
+                                            child: Image.asset(
+                                              "assets/images/exp3.png",
+                                              height: 130,
+                                              width: 80,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
+              ],
+            ),
           ),
         ));
   }
@@ -672,134 +690,60 @@ class _HomeState extends State<Home> {
   ///
 
   buildHomeStoryRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(),
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => MoreStories()));
-          },
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: HexColor('33BEA3'),
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Image.asset(
-                    "assets/images/welcome.png",
-                  ),
-                ),
-                // Adobe XD layer: 'surface1' (group)
-                Positioned(
-                  bottom: 4,
-                  right: 3,
-                  child: Container(
-                    height: 15,
-                    width: 15,
-                    child: Stack(
-                      children: <Widget>[
-                        Pinned.fromPins(
-                          Pin(start: 0.0, end: 0.0),
-                          Pin(start: 0.0, end: 0.0),
-                          child: SvgPicture.string(
-                            '<svg viewBox="0.0 0.0 12.5 12.8" ><path transform="translate(-2.0, -2.0)" d="M 8.253783226013184 1.999999761581421 C 4.799543380737305 1.999999761581421 1.999999523162842 4.862797737121582 1.999999523162842 8.395085334777832 C 1.999999523162842 11.92734622955322 4.799543380737305 14.79017162322998 8.253783226013184 14.79017162322998 C 11.70799827575684 14.79017162322998 14.507568359375 11.92734622955322 14.507568359375 8.395085334777832 C 14.507568359375 4.862797737121582 11.70799827575684 1.999999761581421 8.253783226013184 1.999999761581421 Z M 10.75529766082764 9.03459358215332 L 8.87916088104248 9.03459358215332 L 8.87916088104248 10.95312023162842 L 7.628403663635254 10.95312023162842 L 7.628403663635254 9.03459358215332 L 5.752269744873047 9.03459358215332 L 5.752269744873047 7.755575656890869 L 7.628403663635254 7.755575656890869 L 7.628403663635254 5.837050914764404 L 8.87916088104248 5.837050914764404 L 8.87916088104248 7.755575656890869 L 10.75529766082764 7.755575656890869 L 10.75529766082764 9.03459358215332 Z" fill="#f3c306" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                            allowDrawingOutsideViewBox: true,
-                            fit: BoxFit.fill,
+    return FutureBuilder<Stories>(
+        future: allStory,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return SizedBox(
+              height: 100,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: snapshot.data.stories.length,
+                  itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            print(
+                                snapshot.data.stories[index].stories[1].image);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => MoreStories(
+                                      indexs: index,
+                                      snapshot: snapshot,
+                                    )));
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: HexColor('33BEA3'),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Image.asset(
+                                    "assets/images/welcome.png",
+                                  ),
+                                  // image: DecorationImage(
+                                  //   image: NetworkImage('${AppConfig.STORY_URL}' +
+                                  //       widget.snapshot.data.stories[widget.indexs]
+                                  //           .stories[index].image),
+                                  //   fit: BoxFit.cover,
+                                  // ),
+                                ),
+                              ),
+                              Text(snapshot.data.stories[index].firstName)
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //   return Filter(
-            //     selected_filter: "brands",
-            //   );
-            // }));
-          },
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: HexColor('33BEA3'),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/images/lady1.png",
-              ),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: HexColor('33BEA3'),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/images/lady2.png",
-              ),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: HexColor('33BEA3'),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/doctor.png",
-              ),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 60,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: HexColor('33BEA3'),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Image.asset(
-                "assets/images/lady.png",
-              ),
-            ),
-          ),
-        ),
-        SizedBox(),
-      ],
-    );
+                      )),
+            );
+          } else {
+            return Center(child: Container());
+          }
+        });
   }
 
   buildHomeMenuRow(BuildContext context) {
@@ -810,227 +754,231 @@ class _HomeState extends State<Home> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return DoctorsList(
-                  parent_category_name: "Doctors Online",
-                );
-              }));
-            },
-            child: Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width / 5 - 4,
-              child: Column(
-                children: [
-                  Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: HexColor('F0E7F0'),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x33000000),
-                            offset: Offset(6, 3),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset('assets/images/plusappo.png'))),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Appointment',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff000000),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return DoctorsList(
+                    parent_category_name: "Doctors Online",
+                  );
+                }));
+              },
+              child: Container(
+                // height: 100,
+                // width: MediaQuery.of(context).size.width / 5 - 1,
+                child: Column(
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: HexColor('F0E7F0'),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x33000000),
+                              offset: Offset(6, 3),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      ))
-                ],
+                        child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Image.asset('assets/images/plusappo.png'))),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Appointment',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 10,
+                            color: const Color(0xff000000),
+                          ),
+                          textAlign: TextAlign.left,
+                        ))
+                  ],
+                ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return MedicineData();
-              }));
-            },
-            child: Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width / 5 - 4,
-              child: Column(
-                children: [
-                  Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: HexColor('FFF6DA'),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x33000000),
-                            offset: Offset(6, 3),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: // Adobe XD layer: 'surface1' (group)
-                              Image.asset('assets/images/Paper.png'))),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Prescription',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff000000),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return MedicineData();
+                }));
+              },
+              child: Container(
+                // height: 100,
+                // width: MediaQuery.of(context).size.width / 5 - 4,
+                child: Column(
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: HexColor('FFF6DA'),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x33000000),
+                              offset: Offset(6, 3),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      )),
-                ],
+                        child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: // Adobe XD layer: 'surface1' (group)
+                                Image.asset('assets/images/Paper.png'))),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Prescription',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 10,
+                            color: const Color(0xff000000),
+                          ),
+                          textAlign: TextAlign.left,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              // Navigator.push(context, MaterialPageRoute(builder: (context) {
-              //   return DoctorOnlineList(
-              //     is_top_category: true,
-              //     parent_category_name: "Doctors Online",
-              //   );
-              // }));
-            },
-            child: Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width / 5 - 4,
-              child: Column(
-                children: [
-                  Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: HexColor('D4FFE2'),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x33000000),
-                            offset: Offset(6, 3),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: // Adobe XD layer: 'surface1' (group)
-                              Image.asset('assets/images/Search.png'))),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Find Doctor',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff000000),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return FindDoctorScreen();
+                }));
+              },
+              child: Container(
+                // height: 100,
+                // width: MediaQuery.of(context).size.width / 5 - 4,
+                child: Column(
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: HexColor('D4FFE2'),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x33000000),
+                              offset: Offset(6, 3),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      )),
-                ],
+                        child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: // Adobe XD layer: 'surface1' (group)
+                                Image.asset('assets/images/Search.png'))),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Find Doctor',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 10,
+                            color: const Color(0xff000000),
+                          ),
+                          textAlign: TextAlign.left,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return VideoCall1();
-              }));
-            },
-            child: Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width / 5 - 4,
-              child: Column(
-                children: [
-                  Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: Colors.grey.shade400,
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x33000000),
-                            offset: Offset(6, 3),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: // Adobe XD layer: 'surface1' (group)
-                              Image.asset('assets/images/Vector.png'))),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Pharmacy',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff000000),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                // height: 100,
+                // width: MediaQuery.of(context).size.width / 5 - 4,
+                child: Column(
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: Colors.grey.shade200,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x33000000),
+                              offset: Offset(6, 3),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      )),
-                ],
+                        child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: // Adobe XD layer: 'surface1' (group)
+                                Image.asset('assets/images/Vector.png'))),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Pharmacy',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 10,
+                            color: const Color(0xff000000),
+                          ),
+                          textAlign: TextAlign.left,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return VideoCall1();
-              }));
-            },
-            child: Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width / 5 - 4,
-              child: Column(
-                children: [
-                  Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: HexColor('FDEFEF'),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x33000000),
-                            offset: Offset(6, 3),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: // Adobe XD layer: 'surface1' (group)
-                              Image.asset('assets/images/Info-Square.png'))),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Help Line',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff000000),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                // height: 100,
+                // width: MediaQuery.of(context).size.width / 5 - 4,
+                child: Column(
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: HexColor('FDEFEF'),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x33000000),
+                              offset: Offset(6, 3),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      )),
-                ],
+                        child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: // Adobe XD layer: 'surface1' (group)
+                                Image.asset('assets/images/Info-Square.png'))),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Help Line',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 10,
+                            color: const Color(0xff000000),
+                          ),
+                          textAlign: TextAlign.left,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1380,89 +1328,19 @@ class _HomeState extends State<Home> {
             onTap: () {
               _scaffoldKey.currentState.openDrawer();
             },
-            child: Icon(
-              Icons.menu,
-              color: Colors.black,
-            )
-            // widget.show_back_button
-            //     ? Builder(
-            //         builder: (context) => IconButton(
-            //           icon: Icon(Icons.arrow_back, color: MyTheme.dark_grey),
-            //           onPressed: () => Navigator.of(context).pop(),
-            //         ),
-            //       )
-            //
-            //     ///change here
-            //     : Builder(
-            //         builder: (context) => Padding(
-            //           padding:
-            //               EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
-            //           child: Container(
-            //               child: Stack(
-            //             children: <Widget>[
-            //               Pinned.fromPins(
-            //                 Pin(size: 12.0, start: 0.0),
-            //                 Pin(size: 12.0, start: 0.0),
-            //                 child: Container(
-            //                   decoration: BoxDecoration(
-            //                     borderRadius: BorderRadius.only(
-            //                       topLeft: Radius.circular(2.0),
-            //                       topRight: Radius.circular(2.0),
-            //                       bottomLeft: Radius.circular(2.0),
-            //                     ),
-            //                     color: HexColor('33BEA3'),
-            //                   ),
-            //                 ),
-            //               ),
-            //               Pinned.fromPins(
-            //                 Pin(size: 12.0, end: 0.0),
-            //                 Pin(size: 12.0, start: 0.0),
-            //                 child: Container(
-            //                   decoration: BoxDecoration(
-            //                     borderRadius: BorderRadius.only(
-            //                       topLeft: Radius.circular(2.0),
-            //                       topRight: Radius.circular(2.0),
-            //                       bottomRight: Radius.circular(2.0),
-            //                     ),
-            //                     border: Border.all(
-            //                         width: 1.0, color: HexColor('33BEA3')),
-            //                   ),
-            //                 ),
-            //               ),
-            //               Pinned.fromPins(
-            //                 Pin(size: 12.0, start: 0.0),
-            //                 Pin(size: 12.0, end: 0.0),
-            //                 child: Container(
-            //                   decoration: BoxDecoration(
-            //                     borderRadius: BorderRadius.only(
-            //                       topLeft: Radius.circular(2.0),
-            //                       bottomRight: Radius.circular(2.0),
-            //                       bottomLeft: Radius.circular(2.0),
-            //                     ),
-            //                     color: HexColor('33BEA3'),
-            //                   ),
-            //                 ),
-            //               ),
-            //               Pinned.fromPins(
-            //                 Pin(size: 12.0, end: 0.0),
-            //                 Pin(size: 12.0, end: 0.0),
-            //                 child: Container(
-            //                   decoration: BoxDecoration(
-            //                     borderRadius: BorderRadius.only(
-            //                       topRight: Radius.circular(2.0),
-            //                       bottomRight: Radius.circular(2.0),
-            //                       bottomLeft: Radius.circular(2.0),
-            //                     ),
-            //                     border: Border.all(
-            //                         width: 1.0, color: HexColor('33BEA3')),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ],
-            //           )),
-            //         ),
-            //       ),
-            ),
+            child: widget.show_back_button
+                ? Builder(
+                    builder: (context) => IconButton(
+                      icon: Icon(Icons.arrow_back, color: MyTheme.dark_grey),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  )
+
+                ///change here
+                : Icon(
+                    Icons.menu,
+                    color: Colors.black,
+                  )),
       ),
       elevation: 0.0,
       titleSpacing: 0,

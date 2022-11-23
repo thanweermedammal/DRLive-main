@@ -234,7 +234,7 @@ class ChatRoom extends State<ChatPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "Dr." + widget.doctorName.toUpperCase(),
+          widget.doctorName.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),

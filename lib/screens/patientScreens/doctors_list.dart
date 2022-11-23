@@ -370,7 +370,7 @@ class DoctorsListState extends State<DoctorsList> {
                                                     0, 0, 0, 0),
                                                 child: Center(
                                                   child: Text(
-                                                    "Connect",
+                                                    "Book Now",
                                                     textAlign: TextAlign.left,
                                                     overflow:
                                                         TextOverflow.ellipsis,

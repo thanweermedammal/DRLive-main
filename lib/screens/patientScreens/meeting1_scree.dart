@@ -1,29 +1,43 @@
 import 'dart:io';
 
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
 
 class VideoCall1 extends StatefulWidget {
+  var name;
+
+  var mail;
+
+  VideoCall1({
+    this.name,
+    @required this.mail,
+  });
   @override
   _VideoCall1State createState() => _VideoCall1State();
 }
 
 class _VideoCall1State extends State<VideoCall1> {
+  String name1;
   final serverText = TextEditingController();
   final roomText = TextEditingController(text: "demoroom");
   final subjectText = TextEditingController(text: "Meeting");
-  final nameText = TextEditingController(text: "Akshay");
-  final emailText = TextEditingController(text: "email@email.com");
+  final nameText = TextEditingController(text: user_name.$);
+  final emailText = TextEditingController(text: user_email.$);
   final iosAppBarRGBAColor =
       TextEditingController(text: "#0080FF80"); //transparent blue
   bool isAudioOnly = true;
   bool isAudioMuted = true;
   bool isVideoMuted = true;
+  int indexx = 1;
+
+  String email;
 
   @override
   void initState() {
     super.initState();
+
     JitsiMeet.addListener(JitsiMeetingListener(
         onConferenceWillJoin: _onConferenceWillJoin,
         onConferenceJoined: _onConferenceJoined,
@@ -53,285 +67,331 @@ class _VideoCall1State extends State<VideoCall1> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: <Widget>[
-                // SvgPicture.string(
-                //   SVGAssets.meetImage,
-                //   width: MediaQuery.of(context).size.width,
-                //   fit: BoxFit.fitWidth,
-                // ),
-                const Spacer(flex: 65),
-                Container(
-                  child: Text(
-                    "Join the Meet",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 35,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  margin: EdgeInsets.fromLTRB(32, 0, 32, 0),
-                ),
-                const Spacer(flex: 65),
-                Container(
-                  width: 350,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Color(0xfff3f3f3),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: TextField(
-                    controller: nameText,
-                    maxLines: 1,
-                    keyboardType: TextInputType.name,
-                    textCapitalization: TextCapitalization.words,
-                    textAlignVertical: TextAlignVertical.center,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                      color: Colors.black,
-                    ),
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.fromLTRB(16, 8, 0, 0),
-                        errorBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        suffixIcon: Icon(Icons.person, color: Colors.black),
-                        hintText: "Name"),
-                  ),
-                ),
-                const Spacer(flex: 58),
-                Container(
-                  width: 350,
-                  child: Text(
-                    "Meet Guidelines -\n1) For privacy reasons you may change your name if you want.\n2) By default your audio & video are muted.",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xff898989),
-                    ),
-                  ),
-                ),
-                const Spacer(flex: 58),
-                Row(
-                  children: [
-                    const Spacer(flex: 32),
-                    GestureDetector(
-                      onTap: () {
-                        _onAudioMutedChanged(!isAudioMuted);
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
+        body: indexx == 1
+            ? SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    children: <Widget>[
+                      // SvgPicture.string(
+                      //   SVGAssets.meetImage,
+                      //   width: MediaQuery.of(context).size.width,
+                      //   fit: BoxFit.fitWidth,
+                      // ),
+                      const Spacer(flex: 65),
+                      Container(
+                        child: Text(
+                          "Join the Meet",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 35,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        margin: EdgeInsets.fromLTRB(32, 0, 32, 0),
+                      ),
+                      const Spacer(flex: 65),
+                      Container(
+                        width: 350,
+                        height: 60,
                         decoration: BoxDecoration(
-                            color: isAudioMuted
-                                ? Color(0xffD64467)
-                                : Color(0xffffffff),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.06),
-                                  offset: Offset(0, 4)),
-                            ]),
-                        width: 72,
-                        height: 72,
-                        child: Icon(
-                          isAudioMuted
-                              ? Icons.mic_off_sharp
-                              : Icons.mic_none_sharp,
-                          color: isAudioMuted ? Colors.white : Colors.black,
+                          color: Color(0xfff3f3f3),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextField(
+                          controller: nameText,
+                          maxLines: 1,
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.words,
+                          textAlignVertical: TextAlignVertical.center,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.fromLTRB(16, 8, 0, 0),
+                              errorBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              suffixIcon:
+                                  Icon(Icons.person, color: Colors.black),
+                              hintText: "Name"),
                         ),
                       ),
-                    ),
-                    const Spacer(flex: 16),
-                    GestureDetector(
-                      onTap: () {
-                        _onVideoMutedChanged(!isVideoMuted);
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
+                      const Spacer(flex: 10),
+                      Container(
+                        width: 350,
+                        height: 60,
                         decoration: BoxDecoration(
-                            color: isVideoMuted
-                                ? Color(0xffD64467)
-                                : Color(0xffffffff),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.06),
-                                  offset: Offset(0, 4)),
-                            ]),
-                        width: 72,
-                        height: 72,
-                        child: Icon(
-                          isVideoMuted
-                              ? Icons.videocam_off_sharp
-                              : Icons.videocam,
-                          color: isVideoMuted ? Colors.white : Colors.black,
+                          color: Color(0xfff3f3f3),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextField(
+                          controller: serverText,
+                          maxLines: 1,
+                          keyboardType: TextInputType.name,
+                          textCapitalization: TextCapitalization.words,
+                          textAlignVertical: TextAlignVertical.center,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.fromLTRB(16, 8, 0, 0),
+                              errorBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              suffixIcon: Icon(Icons.link, color: Colors.black),
+                              hintText: "url"),
                         ),
                       ),
-                    ),
-                    const Spacer(flex: 16),
-                    GestureDetector(
-                      onTap: () {
-                        _joinMeeting(); // Join meet on tap
-                      },
-                      child: AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          decoration: BoxDecoration(
-                              color: Color(0xffAA66CC),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 10,
-                                    color: Colors.black.withOpacity(0.06),
-                                    offset: Offset(0, 4)),
-                              ]),
-                          width: 174,
-                          height: 72,
-                          child: Center(
-                            child: Text(
-                              "JOIN MEET",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                                color: Colors.white,
+                      // TextField(
+                      //   controller: serverText,
+                      //   decoration: InputDecoration(
+                      //       border: OutlineInputBorder(),
+                      //       labelText: "Server URL",
+                      //       hintText: "Hint: Leave empty for meet.jitsi.si"),
+                      // ),
+                      const Spacer(flex: 58),
+                      Container(
+                        width: 350,
+                        child: Text(
+                          "Meet Guidelines -\n1) For privacy reasons you may change your name if you want.\n2) By default your audio & video are muted.",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xff898989),
+                          ),
+                        ),
+                      ),
+                      const Spacer(flex: 58),
+                      Row(
+                        children: [
+                          const Spacer(flex: 32),
+                          GestureDetector(
+                            onTap: () {
+                              _onAudioMutedChanged(!isAudioMuted);
+                            },
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              decoration: BoxDecoration(
+                                  color: isAudioMuted
+                                      ? Color(0xffD64467)
+                                      : Color(0xffffffff),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 10,
+                                        color: Colors.black.withOpacity(0.06),
+                                        offset: Offset(0, 4)),
+                                  ]),
+                              width: 72,
+                              height: 72,
+                              child: Icon(
+                                isAudioMuted
+                                    ? Icons.mic_off_sharp
+                                    : Icons.mic_none_sharp,
+                                color:
+                                    isAudioMuted ? Colors.white : Colors.black,
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                          )),
-                    ),
-                    const Spacer(flex: 32),
-                  ],
+                          ),
+                          const Spacer(flex: 16),
+                          GestureDetector(
+                            onTap: () {
+                              _onVideoMutedChanged(!isVideoMuted);
+                            },
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              decoration: BoxDecoration(
+                                  color: isVideoMuted
+                                      ? Color(0xffD64467)
+                                      : Color(0xffffffff),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 10,
+                                        color: Colors.black.withOpacity(0.06),
+                                        offset: Offset(0, 4)),
+                                  ]),
+                              width: 72,
+                              height: 72,
+                              child: Icon(
+                                isVideoMuted
+                                    ? Icons.videocam_off_sharp
+                                    : Icons.videocam,
+                                color:
+                                    isVideoMuted ? Colors.white : Colors.black,
+                              ),
+                            ),
+                          ),
+                          const Spacer(flex: 16),
+                          GestureDetector(
+                            onTap: () {
+                              _joinMeeting(); // Join meet on tap
+                            },
+                            child: AnimatedContainer(
+                                duration: Duration(milliseconds: 300),
+                                decoration: BoxDecoration(
+                                    color: Color(0xffAA66CC),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          blurRadius: 10,
+                                          color: Colors.black.withOpacity(0.06),
+                                          offset: Offset(0, 4)),
+                                    ]),
+                                width: 174,
+                                height: 72,
+                                child: Center(
+                                  child: Text(
+                                    "JOIN MEET",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                          ),
+                          const Spacer(flex: 32),
+                        ],
+                      ),
+                      const Spacer(flex: 38),
+                    ],
+                  ),
                 ),
-                const Spacer(flex: 38),
-              ],
-            ),
-          ),
-        ),
+              )
+            : meetConfig(),
       ),
     );
   }
 
   Widget meetConfig() {
     return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 16.0,
-          ),
-          TextField(
-            controller: serverText,
-            decoration: InputDecoration(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 16.0,
+            ),
+            TextField(
+              controller: serverText,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Server URL",
+                  hintText: "Hint: Leave empty for meet.jitsi.si"),
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            TextField(
+              controller: roomText,
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: "Server URL",
-                hintText: "Hint: Leave empty for meet.jitsi.si"),
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          TextField(
-            controller: roomText,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Room",
-            ),
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          TextField(
-            controller: subjectText,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Subject",
-            ),
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          TextField(
-            controller: nameText,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Display Name",
-            ),
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          TextField(
-            controller: emailText,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Email",
-            ),
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          TextField(
-            controller: iosAppBarRGBAColor,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "AppBar Color(IOS only)",
-                hintText: "Hint: This HAS to be in HEX RGBA format"),
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          CheckboxListTile(
-            title: Text("Audio Only"),
-            value: isAudioOnly,
-            onChanged: _onAudioOnlyChanged,
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          CheckboxListTile(
-            title: Text("Audio Muted"),
-            value: isAudioMuted,
-            onChanged: _onAudioMutedChanged,
-          ),
-          SizedBox(
-            height: 14.0,
-          ),
-          CheckboxListTile(
-            title: Text("Video Muted"),
-            value: isVideoMuted,
-            onChanged: _onVideoMutedChanged,
-          ),
-          Divider(
-            height: 48.0,
-            thickness: 2.0,
-          ),
-          SizedBox(
-            height: 64.0,
-            width: double.maxFinite,
-            child: ElevatedButton(
-              onPressed: () {
-                _joinMeeting();
-              },
-              child: Text(
-                "Join Meeting",
-                style: TextStyle(color: Colors.white),
+                labelText: "Room",
               ),
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateColor.resolveWith((states) => Colors.blue)),
             ),
-          ),
-          SizedBox(
-            height: 48.0,
-          ),
-        ],
+            SizedBox(
+              height: 14.0,
+            ),
+            TextField(
+              controller: subjectText,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Subject",
+              ),
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            TextField(
+              controller: nameText,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Display Name",
+              ),
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            TextField(
+              controller: emailText,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Email",
+              ),
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            TextField(
+              controller: iosAppBarRGBAColor,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "AppBar Color(IOS only)",
+                  hintText: "Hint: This HAS to be in HEX RGBA format"),
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            CheckboxListTile(
+              title: Text("Audio Only"),
+              value: isAudioOnly,
+              onChanged: _onAudioOnlyChanged,
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            CheckboxListTile(
+              title: Text("Audio Muted"),
+              value: isAudioMuted,
+              onChanged: _onAudioMutedChanged,
+            ),
+            SizedBox(
+              height: 14.0,
+            ),
+            CheckboxListTile(
+              title: Text("Video Muted"),
+              value: isVideoMuted,
+              onChanged: _onVideoMutedChanged,
+            ),
+            Divider(
+              height: 48.0,
+              thickness: 2.0,
+            ),
+            SizedBox(
+              height: 64.0,
+              width: double.maxFinite,
+              child: ElevatedButton(
+                onPressed: () {
+                  _joinMeeting();
+                },
+                child: Text(
+                  "Join Meeting",
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Colors.blue)),
+              ),
+            ),
+            SizedBox(
+              height: 48.0,
+            ),
+          ],
+        ),
       ),
     );
   }
